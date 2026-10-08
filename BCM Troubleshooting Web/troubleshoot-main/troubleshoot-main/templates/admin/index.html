@@ -1,0 +1,202 @@
+{% extends "admin/base_site.html" %}
+
+{% load i18n %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  .admin-dashboard {
+    padding: 0 0 40px;
+    background: #111b22;
+    color: #edf4f8;
+  }
+
+  .admin-page-title {
+    margin: 0;
+    padding: 18px 18px 20px;
+    font-size: 2.2rem;
+    font-weight: 300;
+    letter-spacing: -0.05em;
+    color: #edf4f8;
+  }
+
+  .admin-content-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2.2fr) minmax(260px, 0.9fr);
+    gap: 20px;
+    padding: 0 18px 0 18px;
+  }
+
+  .admin-main-panel,
+  .admin-side-panel {
+    background: rgba(35, 46, 54, 0.96);
+    border: 1px solid rgba(164, 182, 196, 0.12);
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  .admin-app-group {
+    margin: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .admin-app-header {
+    background: #8ec1d7;
+    color: #10242f;
+    font-size: 0.90rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    font-weight: 800;
+    padding: 10px 16px;
+    border: 0;
+  }
+
+  .admin-model-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .admin-model-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 52px;
+    padding: 0 16px;
+    border-top: 1px solid rgba(164, 182, 196, 0.16);
+    background: rgba(74, 89, 96, 0.16);
+  }
+
+  .admin-model-row:first-child {
+    border-top: 0;
+  }
+
+  .admin-model-name {
+    font-size: 1rem;
+    color: #edf4f8;
+    font-weight: 500;
+  }
+
+  .admin-model-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    white-space: nowrap;
+  }
+
+  .admin-link {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    color: #b6dced;
+  }
+
+  .admin-link.add-link {
+    color: #71e4a4;
+  }
+
+  .admin-link.change-link {
+    color: #f0c65d;
+  }
+
+  .admin-link.add-link::before {
+    content: "+ ";
+    font-size: 1.05rem;
+    font-weight: 900;
+  }
+
+  .admin-link.change-link::before {
+    content: "✎ ";
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .admin-side-panel {
+    padding: 0;
+  }
+
+  .admin-side-title {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: #edf4f8;
+    padding: 16px 16px 12px;
+    margin: 0;
+  }
+
+  .admin-side-section {
+    border-top: 1px solid rgba(164, 182, 196, 0.12);
+    padding: 0 16px 16px;
+  }
+
+  .admin-side-section h3 {
+    margin: 0;
+    padding: 18px 0 12px;
+    font-size: 1.05rem;
+    color: #edf4f8;
+    font-weight: 500;
+  }
+
+  .admin-empty {
+    color: #c8d7df;
+    font-size: 0.95rem;
+    margin: 0;
+    padding-top: 4px;
+  }
+
+  @media (max-width: 900px) {
+    .admin-content-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .admin-page-title {
+      font-size: 1.85rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-dashboard">
+  <h1 class="admin-page-title">{{ title }}</h1>
+
+  <div class="admin-content-grid">
+    <section class="admin-main-panel">
+      {% if app_list %}
+        {% for app in app_list %}
+          <div class="admin-app-group">
+            <div class="admin-app-header">{{ app.name }}</div>
+            <ul class="admin-model-list">
+              {% for model in app.models %}
+                <li class="admin-model-row">
+                  <span class="admin-model-name">{{ model.name }}</span>
+                  <div class="admin-model-actions">
+                    {% if model.add_url %}
+                      <a class="admin-link add-link" href="{{ model.add_url }}">Add</a>
+                    {% endif %}
+                    {% if model.admin_url %}
+                      <a class="admin-link change-link" href="{{ model.admin_url }}">Change</a>
+                    {% endif %}
+                  </div>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="admin-empty">No application models available.</p>
+      {% endif %}
+    </section>
+
+    <aside class="admin-side-panel">
+      <h2 class="admin-side-title">Recent actions</h2>
+      <div class="admin-side-section">
+        <h3>My actions</h3>
+        <p class="admin-empty">None available</p>
+      </div>
+    </aside>
+  </div>
+</div>
+{% endblock %}

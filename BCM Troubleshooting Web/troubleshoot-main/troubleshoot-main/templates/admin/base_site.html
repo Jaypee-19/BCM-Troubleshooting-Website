@@ -1,0 +1,86 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
+
+{% block branding %}
+<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  :root {
+    --admin-bg: #111b22;
+    --admin-dark-2: #1a252d;
+    --admin-panel: rgba(41, 54, 63, 0.96);
+    --admin-panel-alt: rgba(22, 34, 42, 0.98);
+    --admin-header: #7fb3c6;
+    --admin-header-text: #0c1f29;
+    --admin-text: #edf4f8;
+    --admin-muted: #a8bac5;
+    --admin-line: rgba(160, 179, 191, 0.2);
+    --admin-link: #b9e1f5;
+    --admin-blue: #9ad3e8;
+    --admin-green: #68dd9a;
+    --admin-yellow: #f4d15d;
+  }
+
+  html, body {
+    background: var(--admin-bg) !important;
+    color: var(--admin-text) !important;
+  }
+
+  body {
+    font-family: "Segoe UI", sans-serif;
+  }
+
+  #header {
+    background: linear-gradient(90deg, #7bb2c6 0%, #7ab0c2 100%) !important;
+    border-bottom: 0 !important;
+    min-height: 82px;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  #branding {
+    padding: 18px 24px;
+    min-height: 82px;
+    display: flex;
+    align-items: center;
+  }
+
+  #branding h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    font-weight: 300;
+    letter-spacing: -0.04em;
+    color: var(--admin-header-text);
+    line-height: 1.2;
+  }
+
+  #branding h1 a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  #user-tools {
+    color: rgba(15, 26, 34, 0.9);
+    font-weight: 600;
+    padding-right: 18px;
+  }
+
+  #user-tools a {
+    color: rgba(15, 26, 34, 0.9);
+    text-decoration: none;
+  }
+
+  #content {
+    padding: 0 0 30px;
+    background: var(--admin-bg);
+  }
+
+  .dashboard {
+    background: var(--admin-bg);
+  }
+</style>
+{% endblock %}
