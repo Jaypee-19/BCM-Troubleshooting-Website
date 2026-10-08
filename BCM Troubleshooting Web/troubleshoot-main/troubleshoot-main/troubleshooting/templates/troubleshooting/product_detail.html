@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }} problems · BCM-Troubleshooting Web{% endblock %}
+
+{% block content %}
+  <div class="breadcrumb"><a href="{% url 'troubleshooting:product_list' %}">Product ranges</a> / {{ product.name }}</div>
+  <div class="eyebrow">Product range</div>
+  <h1>{{ product.name }}</h1>
+  {% if product.description %}<p class="intro">{{ product.description|linebreaksbr }}</p>{% endif %}
+
+  {% if configuration_form %}
+    <section class="panel">
+      <h2>Tell us about this system</h2>
+      <p>Answer the equipment and configuration questions so we can show relevant troubleshooting steps.</p>
+      <form method="post">
+        {% csrf_token %}
+        {{ configuration_form.non_field_errors }}
+        {% for field in configuration_form %}
+          <div class="configuration-field">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}<p class="muted">{{ field.help_text|linebreaksbr }}</p>{% endif %}
+            {{ field.errors }}
+          </div>
+        {% empty %}
+          <p class="muted">No configuration questions are currently required for this product.</p>
+        {% endfor %}
+        <div class="actions">
+          <button class="button" type="submit">Find matching problems</button>
+        </div>
+      </form>
+    </section>
+  {% elif problems %}
+    <p class="intro">Choose the problem you are facing to see the matching troubleshooting flows.</p>
+    <div class="actions">
+      <a class="button secondary" href="?edit=1">Update system configuration</a>
+    </div>
+    <section class="panel">
+      <h2>Choose a problem</h2>
+      {% for problem in problems %}
+        <div class="problem-block">
+          <h3>{{ problem.name }}</h3>
+          {% if problem.description %}<p>{{ problem.description|linebreaksbr }}</p>{% endif %}
+          <a class="button" href="{% url 'troubleshooting:problem_detail' product.id problem.id %}">Continue with this problem</a>
+        </div>
+      {% endfor %}
+    </section>
+  {% else %}
+    <section class="panel">
+      <h2>No active problems yet</h2>
+      <p>An administrator can add troubleshooting problems for this product range.</p>
+    </section>
+  {% endif %}
+{% endblock %}

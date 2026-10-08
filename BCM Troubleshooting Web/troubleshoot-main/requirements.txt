@@ -1,0 +1,5 @@
+# Pin the Django version verified in the project's virtual environment.
+Django==6.1.2
+
+# Django's ImageField uses Pillow to validate and read uploaded images.
+Pillow>=11.0

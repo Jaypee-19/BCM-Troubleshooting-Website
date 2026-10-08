@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}{{ problem.name }} · {{ product.name }} · BCM-Troubleshooting Web{% endblock %}
+
+{% block content %}
+  <div class="breadcrumb">
+    <a href="{% url 'troubleshooting:product_list' %}">Products</a>
+    / <a href="{% url 'troubleshooting:product_detail' product.id %}">{{ product.name }}</a>
+    / {{ problem.name }}
+  </div>
+  <div class="eyebrow">Identify the issue</div>
+  <h1>{{ problem.name }}</h1>
+  {% if problem.description %}<p class="intro">{{ problem.description|linebreaksbr }}</p>{% endif %}
+
+  {% if diagnosis_form %}
+    <section class="panel">
+      <h2>Check the equipment and status</h2>
+      <p>Answer the questions that apply to this problem to find the matching guide.</p>
+      <form method="post">
+        {% csrf_token %}
+        {{ diagnosis_form.non_field_errors }}
+        {% for field in diagnosis_form %}
+          <div class="configuration-field">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}<p class="muted">{{ field.help_text|linebreaksbr }}</p>{% endif %}
+            {{ field.errors }}
+          </div>
+        {% empty %}
+          <p class="muted">No additional diagnostic questions are configured for this problem.</p>
+        {% endfor %}
+        <div class="actions">
+          <button class="button" type="submit">Find matching troubleshooting</button>
+        </div>
+      </form>
+    </section>
+  {% elif flows %}
+    <p class="intro">Choose a matching troubleshooting guide.</p>
+    <div class="actions">
+      <a class="button secondary" href="?edit=1">Update answers</a>
+    </div>
+    <section class="panel">
+      <h2>Matching troubleshooting guides</h2>
+      {% for flow in flows %}
+        <div class="flow-row">
+          <div>
+            <strong>{{ flow.name }}</strong>
+            {% if flow.description %}<p>{{ flow.description|linebreaksbr }}</p>{% endif %}
+          </div>
+          <form class="inline-form" method="post" action="{% url 'troubleshooting:flow_start' flow.id %}">
+            {% csrf_token %}
+            <button class="button" type="submit">Start troubleshooting</button>
+          </form>
+        </div>
+      {% endfor %}
+    </section>
+  {% elif diagnosis_complete %}
+    <section class="panel">
+      <h2>No matching troubleshooting guide yet</h2>
+      <p>No published flow matches these answers. Ask an administrator to review this product, problem, and its flow requirements.</p>
+      <a class="button secondary" href="?edit=1">Review answers</a>
+    </section>
+  {% endif %}
+{% endblock %}

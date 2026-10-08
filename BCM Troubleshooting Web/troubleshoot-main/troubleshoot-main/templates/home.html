@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}BCM-Troubleshooting Web{% endblock %}
+
+{% block content %}
+  <div class="eyebrow">BCM Troubleshooting Guide</div>
+  <h1>Find the next right step.</h1>
+  <p class="intro">Follow clear, equipment-specific troubleshooting flows. Each answer takes you to the next relevant check, resolution or detailed procedure.</p>
+  <section class="panel">
+    {% if request.user.is_authenticated %}
+      <h2>Ready to troubleshoot?</h2>
+      <p>Select a product range to see its active problems and guided procedures.</p>
+      <div class="actions">
+        <a class="button" href="{% url 'troubleshooting:product_list' %}">Open troubleshooting guide</a>
+      </div>
+    {% else %}
+      <h2>Sign in to access the guide</h2>
+      <p>Product flows and procedure files are available to authorized technicians.</p>
+      <div class="actions">
+        <a class="button" href="{% url 'troubleshooting:login' %}">Technician sign in</a>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}

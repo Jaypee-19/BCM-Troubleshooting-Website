@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Troubleshooting path complete · {{ flow.name }} · BCM-Troubleshooting Web{% endblock %}
+
+{% block content %}
+  <div class="eyebrow">Troubleshooting path complete</div>
+  <h1>{{ ending_step.title }}</h1>
+  <section class="panel">
+    <h2>This path has reached an endpoint</h2>
+    {% if outcome %}<p>Your selected finding: <strong>{{ outcome }}</strong></p>{% endif %}
+    {% if ending_step.details %}<div class="step-content">{{ ending_step.details|linebreaks }}</div>{% endif %}
+    {% if ending_step.guide_file %}
+      <div class="actions">
+        <a class="button" href="{% url 'troubleshooting:download_guide' flow.id ending_step.id %}">Download detailed procedure</a>
+      </div>
+    {% endif %}
+    <div class="actions">
+      {% if previous_step_id %}
+        <a class="button secondary" href="{% url 'troubleshooting:step_detail' flow.id previous_step_id %}">Go back</a>
+      {% endif %}
+      <a class="quiet-link" href="{% url 'troubleshooting:product_detail' flow.problem.product_range.id %}">Choose another problem</a>
+    </div>
+  </section>
+{% endblock %}

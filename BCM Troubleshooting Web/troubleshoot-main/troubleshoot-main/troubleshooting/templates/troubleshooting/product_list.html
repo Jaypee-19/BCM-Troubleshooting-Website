@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Select a product · BCM-Troubleshooting Web{% endblock %}
+
+{% block content %}
+  <div class="eyebrow">Troubleshooting guide</div>
+  <h1>Select a product range</h1>
+  <p class="intro">Choose a product with an available troubleshooting guide. More product guides will appear here as administrators publish them.</p>
+
+  {% if products %}
+    <div class="card-grid">
+      {% for product in products %}
+        <article class="card">
+          {% if product.image %}
+            <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }} product image" loading="lazy" decoding="async">
+          {% endif %}
+          <h2>{{ product.name }}</h2>
+          {% if product.description %}<p>{{ product.description|linebreaksbr }}</p>{% endif %}
+          <div class="actions">
+            {% if product.has_published_flows %}
+            <a class="button" href="{% url 'troubleshooting:product_detail' product.id %}">View problems</a>
+            {% else %}
+            <span class="button secondary" aria-disabled="true">Coming soon</span>
+            {% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <section class="panel">
+      <h2>No active product ranges yet</h2>
+      <p>An administrator needs to add and activate product ranges before troubleshooting can begin.</p>
+    </section>
+  {% endif %}
+{% endblock %}

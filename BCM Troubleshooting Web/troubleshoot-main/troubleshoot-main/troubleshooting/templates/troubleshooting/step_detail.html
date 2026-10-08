@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}{{ step.title }} · {{ flow.name }} · BCM-Troubleshooting Web{% endblock %}
+
+{% block content %}
+  <div class="breadcrumb">
+    <a href="{% url 'troubleshooting:product_list' %}">Product ranges</a>
+    / <a href="{% url 'troubleshooting:product_detail' flow.problem.product_range.id %}">{{ flow.problem.product_range.name }}</a>
+    / {{ flow.problem.name }}
+  </div>
+
+  <div class="eyebrow">{{ flow.name }}</div>
+  <h1>{{ step.title }}</h1>
+  <div class="step-meta">Step {{ visited_step_number }} of up to {{ active_step_count }}</div>
+  <div class="progress-track" role="progressbar" aria-label="Troubleshooting progress"
+       aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ progress_percent }}">
+    <div class="progress-fill" style="width: {{ progress_percent }}%"></div>
+  </div>
+
+  {% if step.warning %}
+    <aside class="alert" role="note">
+      <strong>Warning</strong>
+      <p>{{ step.warning|linebreaksbr }}</p>
+    </aside>
+  {% endif %}
+
+  <section class="panel">
+    <div class="eyebrow">{{ step.get_step_type_display }}</div>
+    {% if step.instructions %}<div class="step-content">{{ step.instructions|linebreaks }}</div>{% endif %}
+    {% if step.details %}<div class="step-content">{{ step.details|linebreaks }}</div>{% endif %}
+    {% if step.notes %}
+      <p><strong>Note:</strong> {{ step.notes|linebreaksbr }}</p>
+    {% endif %}
+
+    {% if images %}
+      <div class="image-grid">
+        {% for image in images %}
+          <figure>
+            <img class="step-image" src="{{ image.image.url }}" alt="{{ image.alt_text }}" loading="lazy" decoding="async">
+            {% if image.caption or image.description %}
+              <figcaption>
+                {% if image.caption %}<strong>{{ image.caption }}</strong>{% endif %}
+                {% if image.description %}<br>{{ image.description|linebreaksbr }}{% endif %}
+              </figcaption>
+            {% endif %}
+          </figure>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if step.guide_file %}
+      <div class="actions">
+        <a class="button secondary" href="{% url 'troubleshooting:download_guide' flow.id step.id %}">Download detailed procedure</a>
+      </div>
+    {% endif %}
+
+    {% if choices %}
+      <h2 class="step-section-title">Choose what you found</h2>
+      <div class="choice-list">
+        {% for choice in choices %}
+          <form class="choice-form" method="post"
+                action="{% url 'troubleshooting:choose_step' flow.id step.id choice.id %}">
+            {% csrf_token %}
+            <button class="button choice-button" type="submit">{{ choice.label }}</button>
+          </form>
+        {% endfor %}
+      </div>
+    {% elif step.step_type == "resolution" %}
+      <p><strong>Resolution step:</strong> this path has reached its endpoint.</p>
+    {% else %}
+      <p class="muted">This path has no further choices.</p>
+    {% endif %}
+
+    {% if previous_step_id %}
+      <div class="actions">
+        <a class="button secondary" href="{% url 'troubleshooting:step_detail' flow.id previous_step_id %}">Previous step</a>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}
