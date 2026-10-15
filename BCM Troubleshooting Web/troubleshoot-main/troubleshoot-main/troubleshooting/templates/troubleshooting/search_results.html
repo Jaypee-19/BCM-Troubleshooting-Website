@@ -3,18 +3,23 @@
 {% block title %}Search the guide · BCM-Troubleshooting Web{% endblock %}
 
 {% block content %}
-  <div class="eyebrow">Troubleshooting guide</div>
-  <h1>Search the guide</h1>
-  <p class="intro">Search product ranges, problems, instructions, findings and procedure names.</p>
+  <header class="page-header">
+    <div class="eyebrow">Troubleshooting guide</div>
+    <h1>Search the guide</h1>
+    <p class="intro">Search product ranges, symptoms, instructions, findings, and procedure names to find a relevant guide.</p>
+  </header>
 
   <section class="panel">
     <form method="get" action="{% url 'troubleshooting:search' %}">
-      <label for="guide-search"><strong>Search terms</strong></label>
-      <div class="actions search-controls">
-        <input class="search-input" id="guide-search" type="search" name="q" value="{{ query }}"
-               maxlength="{{ max_search_length }}">
+      <div class="search-form">
+        <div class="search-field">
+          <label for="guide-search">What are you troubleshooting?</label>
+          <input class="search-input" id="guide-search" type="search" name="q" value="{{ query }}"
+                 maxlength="{{ max_search_length }}" placeholder="e.g. product, symptom, error message" autocomplete="off">
+        </div>
         <button class="button" type="submit">Search</button>
       </div>
+      <p class="muted">You can search up to {{ max_search_length }} characters.</p>
     </form>
   </section>
 
@@ -22,21 +27,21 @@
     <div class="alert" role="alert">{{ search_error }}</div>
   {% elif search_performed %}
     {% if search_page.object_list %}
-      <p class="step-meta">{{ search_page.paginator.count }} matching flow{{ search_page.paginator.count|pluralize }} for “{{ query }}”</p>
-      <div class="card-grid">
+      <p class="result-count" role="status">{{ search_page.paginator.count }} guide{{ search_page.paginator.count|pluralize }} found for “{{ query }}”</p>
+      <section class="card-grid" aria-label="Search results">
         {% for flow in search_page %}
           <article class="card">
-            <div class="eyebrow">{{ flow.problem.product_range.name }}</div>
+            <div class="product-status">{{ flow.problem.product_range.name }}</div>
             <h2>{{ flow.name }}</h2>
             <p><strong>{{ flow.problem.name }}</strong></p>
             {% if flow.description %}<p>{{ flow.description|linebreaksbr }}</p>{% endif %}
-            <form method="post" action="{% url 'troubleshooting:flow_start' flow.id %}">
+            <form class="actions" method="post" action="{% url 'troubleshooting:flow_start' flow.id %}">
               {% csrf_token %}
               <button class="button" type="submit">Start this flow</button>
             </form>
           </article>
         {% endfor %}
-      </div>
+      </section>
 
       {% if search_page.has_other_pages %}
         <nav aria-label="Search result pages" class="actions">
@@ -50,12 +55,15 @@
         </nav>
       {% endif %}
     {% else %}
-      <section class="panel">
+      <section class="panel empty-state">
         <h2>No matching active flows</h2>
-        <p>Try another equipment name, symptom, error message or procedure term.</p>
+        <p>Try a different product name, symptom, error message, or procedure term. Check spelling or use fewer words.</p>
+        <div class="actions">
+          <a class="button secondary" href="{% url 'troubleshooting:product_list' %}">Browse products</a>
+        </div>
       </section>
     {% endif %}
   {% elif not search_error %}
-    <p class="muted">Enter one or more terms to search the guide.</p>
+    <p class="muted">Enter one or more terms—such as a product, symptom, or error message—to search the guide.</p>
   {% endif %}
 {% endblock %}

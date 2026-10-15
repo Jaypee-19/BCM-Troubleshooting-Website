@@ -19,6 +19,8 @@ from .models import (
 class ProblemInline(admin.TabularInline):
     model = Problem
     extra = 0
+    verbose_name = 'problem'
+    verbose_name_plural = 'Problems users can select for this product'
     fields = ('name', 'is_active', 'sort_order')
     show_change_link = True
 
@@ -26,6 +28,8 @@ class ProblemInline(admin.TabularInline):
 class ConfigurationOptionInline(admin.TabularInline):
     model = ConfigurationOption
     extra = 0
+    verbose_name = 'answer option'
+    verbose_name_plural = 'Answer options shown to users'
     fields = ('label', 'is_active', 'sort_order')
 
 
@@ -50,6 +54,8 @@ class FlowConfigurationRequirementInline(admin.TabularInline):
     model = FlowConfigurationRequirement
     formset = FlowConfigurationRequirementFormSet
     extra = 0
+    verbose_name = 'equipment requirement'
+    verbose_name_plural = 'Equipment requirements (optional; limit this guide to selected answers)'
     fields = ('option',)
     autocomplete_fields = ('option',)
 
@@ -57,6 +63,8 @@ class FlowConfigurationRequirementInline(admin.TabularInline):
 class FlowInline(admin.TabularInline):
     model = TroubleshootingFlow
     extra = 0
+    verbose_name = 'troubleshooting guide'
+    verbose_name_plural = 'Troubleshooting guides for this problem'
     fields = ('name', 'description', 'is_active')
     show_change_link = True
 
@@ -64,6 +72,8 @@ class FlowInline(admin.TabularInline):
 class TroubleshootingStepInline(admin.TabularInline):
     model = TroubleshootingStep
     extra = 0
+    verbose_name = 'guide step'
+    verbose_name_plural = 'Guide steps (add steps here, then set the starting step after saving)'
     fields = ('title', 'step_type', 'is_active', 'sort_order')
     show_change_link = True
 
@@ -73,6 +83,8 @@ class StepChoiceInline(admin.TabularInline):
     # A choice has both a source step and a destination step; this is its owner.
     fk_name = 'step'
     extra = 0
+    verbose_name = 'answer choice'
+    verbose_name_plural = 'Answer choices (leave the next step blank to end this path)'
     fields = ('label', 'next_step', 'sort_order')
     autocomplete_fields = ('next_step',)
 
@@ -80,6 +92,8 @@ class StepChoiceInline(admin.TabularInline):
 class StepImageInline(admin.TabularInline):
     model = StepImage
     extra = 0
+    verbose_name = 'step image'
+    verbose_name_plural = 'Images and diagrams for this step'
     fields = ('image', 'caption', 'alt_text', 'description', 'sort_order')
 
 
@@ -90,14 +104,24 @@ class ProductRangeAdmin(admin.ModelAdmin):
     search_fields = ('name', 'description')
     ordering = ('sort_order', 'name')
     readonly_fields = ('created_at', 'updated_at')
-    fields = (
-        'name',
-        'description',
-        'image',
-        'is_active',
-        'sort_order',
-        'created_at',
-        'updated_at',
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'description', 'image'),
+            'description': (
+                'Create the equipment family users will choose before '
+                'they describe their issue.'
+            ),
+        }),
+        ('Display settings', {
+            'fields': ('is_active', 'sort_order'),
+            'description': (
+                'Only active products appear to technicians. Lower sort '
+                'numbers appear earlier in product lists.'
+            ),
+        }),
+        ('Record history', {
+            'fields': ('created_at', 'updated_at'),
+        }),
     )
     inlines = (ProblemInline,)
 
@@ -128,6 +152,30 @@ class ConfigurationQuestionAdmin(admin.ModelAdmin):
     )
     list_select_related = ('problem', 'depends_on_option')
     inlines = (ConfigurationOptionInline,)
+    fieldsets = (
+        ('Question shown to users', {
+            'fields': ('name', 'help_text', 'phase', 'is_required', 'is_active', 'sort_order'),
+            'description': (
+                'Use System configuration for equipment details collected '
+                'before issue selection. Use Problem diagnosis for questions '
+                'that narrow down a selected issue.'
+            ),
+        }),
+        ('Where the question appears', {
+            'fields': ('applies_to_products', 'problem'),
+            'description': (
+                'Select every product this question applies to. A problem is '
+                'optional and is used only for diagnosis questions.'
+            ),
+        }),
+        ('Conditional display', {
+            'fields': ('depends_on_option',),
+            'description': (
+                'Optional: show this question only after the user selects '
+                'the specified answer to another question.'
+            ),
+        }),
+    )
 
 
 @admin.register(ConfigurationOption)
@@ -137,6 +185,22 @@ class ConfigurationOptionAdmin(admin.ModelAdmin):
     search_fields = ('label', 'question__name', 'question__applies_to_products__name')
     autocomplete_fields = ('question',)
     list_select_related = ('question',)
+    fieldsets = (
+        (None, {
+            'fields': ('question', 'label'),
+            'description': (
+                'Add one selectable answer to a question. Questions can also '
+                'be edited with their answer options on the question page.'
+            ),
+        }),
+        ('Display settings', {
+            'fields': ('is_active', 'sort_order'),
+            'description': (
+                'Only active answers are offered to technicians. Lower sort '
+                'numbers appear earlier.'
+            ),
+        }),
+    )
 
 
 @admin.register(Problem)
@@ -147,6 +211,22 @@ class ProblemAdmin(admin.ModelAdmin):
     autocomplete_fields = ('product_range',)
     list_select_related = ('product_range',)
     inlines = (FlowInline,)
+    fieldsets = (
+        (None, {
+            'fields': ('product_range', 'name', 'description'),
+            'description': (
+                'Describe one issue or symptom and choose the product range '
+                'it belongs to.'
+            ),
+        }),
+        ('Display settings', {
+            'fields': ('is_active', 'sort_order'),
+            'description': (
+                'Only active problems are available to technicians. Lower '
+                'sort numbers appear earlier.'
+            ),
+        }),
+    )
 
 
 @admin.register(TroubleshootingFlow)
@@ -157,14 +237,24 @@ class TroubleshootingFlowAdmin(admin.ModelAdmin):
     autocomplete_fields = ('problem', 'start_step')
     list_select_related = ('problem', 'problem__product_range', 'start_step')
     readonly_fields = ('created_at', 'updated_at')
-    fields = (
-        'problem',
-        'name',
-        'description',
-        'is_active',
-        'start_step',
-        'created_at',
-        'updated_at',
+    fieldsets = (
+        (None, {
+            'fields': ('problem', 'name', 'description'),
+            'description': (
+                'Create one guide for a problem. Add the guide steps below, '
+                'save, then reopen this guide to choose its starting step.'
+            ),
+        }),
+        ('Guide behavior', {
+            'fields': ('is_active', 'start_step'),
+            'description': (
+                'Publish only when the flow and its starting step are ready. '
+                'A starting step must belong to this guide.'
+            ),
+        }),
+        ('Record history', {
+            'fields': ('created_at', 'updated_at'),
+        }),
     )
     inlines = (
         FlowConfigurationRequirementInline,
@@ -187,19 +277,31 @@ class TroubleshootingStepAdmin(admin.ModelAdmin):
     autocomplete_fields = ('flow',)
     list_select_related = ('flow', 'flow__problem', 'flow__problem__product_range')
     readonly_fields = ('created_at', 'updated_at')
-    fields = (
-        'flow',
-        'title',
-        'step_type',
-        'instructions',
-        'details',
-        'notes',
-        'warning',
-        'guide_file',
-        'is_active',
-        'sort_order',
-        'created_at',
-        'updated_at',
+    fieldsets = (
+        ('Step content', {
+            'fields': ('flow', 'title', 'step_type', 'instructions', 'details'),
+            'description': (
+                'Write one clear action or question per step. Use a question '
+                'or decision when users need to choose an answer.'
+            ),
+        }),
+        ('Additional guidance', {
+            'fields': ('notes', 'warning', 'guide_file'),
+            'description': (
+                'Add safety or caution information, helpful notes, and an '
+                'optional procedure file.'
+            ),
+        }),
+        ('Display settings', {
+            'fields': ('is_active', 'sort_order'),
+            'description': (
+                'Only active steps are shown. Lower sort numbers determine '
+                'their order in the guide.'
+            ),
+        }),
+        ('Record history', {
+            'fields': ('created_at', 'updated_at'),
+        }),
     )
     inlines = (StepChoiceInline, StepImageInline)
 
@@ -210,6 +312,15 @@ class StepChoiceAdmin(admin.ModelAdmin):
     search_fields = ('label', 'step__title', 'next_step__title')
     autocomplete_fields = ('step', 'next_step')
     list_select_related = ('step', 'next_step')
+    fieldsets = (
+        (None, {
+            'fields': ('step', 'label', 'next_step', 'sort_order'),
+            'description': (
+                'Add a button label for the answer. Choose the next step '
+                'users should see, or leave it blank to finish this path.'
+            ),
+        }),
+    )
 
 
 @admin.register(StepImage)
@@ -218,6 +329,15 @@ class StepImageAdmin(admin.ModelAdmin):
     search_fields = ('caption', 'description', 'alt_text', 'step__title')
     autocomplete_fields = ('step',)
     list_select_related = ('step',)
+    fieldsets = (
+        (None, {
+            'fields': ('step', 'image', 'caption', 'alt_text', 'description', 'sort_order'),
+            'description': (
+                'Attach a relevant diagram to a step. Add descriptive alt '
+                'text so users relying on assistive technology understand the image.'
+            ),
+        }),
+    )
 
 
 admin.site.site_header = 'BCM-Troubleshooting Web administration'

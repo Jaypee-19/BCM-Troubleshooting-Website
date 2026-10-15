@@ -459,6 +459,38 @@ class TroubleshootingUploadValidationTests(TestCase):
 
 
 class TroubleshootingAdminAccessTests(TestCase):
+    def test_admin_dashboard_explains_the_guide_setup_actions(self):
+        admin_user = get_user_model().objects.create_superuser(
+            username='admin',
+            email='admin@example.com',
+            password='test-password',
+        )
+        self.client.force_login(admin_user)
+
+        response = self.client.get('/admin/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Build a troubleshooting guide')
+        self.assertContains(response, 'Add product range')
+        self.assertContains(response, 'Add problem')
+        self.assertContains(response, 'Add flow')
+        self.assertContains(response, 'Add question')
+        self.assertContains(response, 'Before publishing')
+        self.assertContains(response, 'Create a new product range')
+        page = response.content.decode()
+        self.assertLess(
+            page.index('Add a product range'),
+            page.index('Add a problem'),
+        )
+        self.assertLess(
+            page.index('Add a problem'),
+            page.index('Configure questions and options'),
+        )
+        self.assertLess(
+            page.index('Configure questions and options'),
+            page.index('Build the troubleshooting flow'),
+        )
+
     def test_staff_user_can_open_product_admin(self):
         admin_user = get_user_model().objects.create_superuser(
             username='admin',
@@ -488,6 +520,25 @@ class TroubleshootingAdminAccessTests(TestCase):
 
         self.assertEqual(question_response.status_code, 200)
         self.assertEqual(option_response.status_code, 200)
+
+    def test_admin_forms_include_explanations_for_configuration_and_flow_setup(self):
+        admin_user = get_user_model().objects.create_superuser(
+            username='admin',
+            email='admin@example.com',
+            password='test-password',
+        )
+        self.client.force_login(admin_user)
+
+        question_response = self.client.get(
+            '/admin/troubleshooting/configurationquestion/add/',
+        )
+        flow_response = self.client.get(
+            '/admin/troubleshooting/troubleshootingflow/add/',
+        )
+
+        self.assertContains(question_response, 'System configuration')
+        self.assertContains(question_response, 'Conditional display')
+        self.assertContains(flow_response, 'choose its starting step')
 
     def test_admin_question_form_saves_product_scope(self):
         product = ProductRange.objects.get(name='VSAT')

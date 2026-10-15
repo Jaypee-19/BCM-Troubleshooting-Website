@@ -22,6 +22,9 @@
         --primary-soft: rgba(47, 103, 221, 0.12);
         --accent: #f7b95a;
         --accent-soft: #fff5df;
+        --warning: #e6a83e;
+        --warning-soft: #fff5df;
+        --card-soft: #f6f9ff;
         --shadow: 0 18px 40px rgba(8, 22, 34, 0.12);
         --shadow-strong: 0 20px 50px rgba(8, 22, 34, 0.18);
         font-family: Inter, "Segoe UI", sans-serif;
@@ -130,6 +133,24 @@
         gap: 18px;
       }
       .main-nav a, .main-nav button {
+        min-height: 40px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 3px;
+      }
+      .main-nav a[aria-current="page"] {
+        color: #fff;
+        box-shadow: inset 0 -2px 0 var(--accent);
+      }
+      .user-label {
+        padding: 7px 10px;
+        border: 1px solid rgba(255,255,255,0.14);
+        border-radius: 999px;
+        color: rgba(255,255,255,0.65);
+        font-size: 0.76rem;
+      }
+      .main-nav a, .main-nav button {
         color: rgba(255,255,255,0.8);
         font-size: 0.78rem;
         font-weight: 700;
@@ -150,6 +171,7 @@
         padding: 42px 24px 72px;
       }
       main { min-height: calc(100vh - 220px); }
+      main:focus { outline: none; }
 
       .page-header {
         margin-bottom: 30px;
@@ -192,6 +214,23 @@
         max-width: 700px;
         font-size: 1.08rem;
       }
+      .page-title-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+      }
+      .page-title-row > :first-child { min-width: 0; }
+      .page-title-row .actions { flex: 0 0 auto; margin-top: 4px; }
+      .section-heading {
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 8px;
+      }
+      .section-heading h2 { margin-bottom: 0; }
+      .section-heading p { font-size: 0.9rem; }
 
       .panel, .card {
         border: 1px solid var(--border);
@@ -213,6 +252,60 @@
         padding: 22px;
         background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,249,255,0.98));
       }
+      .product-card {
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+      }
+      .product-card .actions { margin-top: auto; padding-top: 20px; }
+      .product-card .product-description { flex: 1; }
+      .product-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .product-status::before {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #23a26d;
+        content: "";
+      }
+      .product-status.pending::before { background: var(--warning); }
+      .product-image { object-fit: contain; }
+      .step-type-badge, .flow-kicker, .required-mark {
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 10px;
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+      .step-type-badge {
+        padding: 6px 10px;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: var(--card-alt);
+      }
+      .required-mark {
+        margin: 0 0 0 7px;
+        color: #9b343b;
+        font-size: 0.7rem;
+      }
+      .field-label-row {
+        display: flex;
+        align-items: baseline;
+        gap: 7px;
+      }
+      .field-label-row label { margin-bottom: 7px; }
       .card h2 {
         margin-top: 0;
         font-size: 1.25rem;
@@ -281,11 +374,85 @@
       }
 
       .breadcrumb {
-        margin-bottom: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
         color: var(--muted);
         font-size: 0.88rem;
       }
       .breadcrumb a { color: var(--primary); }
+      .breadcrumb a:hover { text-decoration: underline; }
+      .breadcrumb-separator { color: #91a1b5; }
+      .progress-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .workflow-steps {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0 0 22px;
+        padding: 0;
+        list-style: none;
+      }
+      .workflow-steps li {
+        padding: 7px 11px;
+        border: 1px solid var(--border);
+        border-radius: 99px;
+        background: rgba(255,255,255,0.76);
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 750;
+      }
+      .workflow-steps li[aria-current="step"] {
+        border-color: rgba(47, 103, 221, 0.25);
+        background: var(--primary-soft);
+        color: var(--primary-strong);
+      }
+      .problem-block {
+        padding: 20px 0;
+        border-top: 1px solid var(--border);
+      }
+      .problem-block:first-of-type { border-top: 0; }
+      .problem-block > p { margin: 6px 0 0; }
+      .problem-block .button { margin-top: 15px; }
+      .form-intro { margin-bottom: 6px; }
+      .field-errors, .errorlist {
+        margin: 6px 0 0;
+        color: #a52f35;
+        font-size: 0.84rem;
+        font-weight: 650;
+      }
+      .form-error {
+        margin-bottom: 18px;
+        padding: 13px 15px;
+        border: 1px solid #efc7c7;
+        border-radius: 10px;
+        background: #fff3f2;
+        color: #8c252b;
+      }
+      .form-error ul { margin: 0; padding-left: 20px; }
+      .search-form {
+        display: flex;
+        align-items: flex-end;
+        gap: 12px;
+      }
+      .search-form .search-field { flex: 1; min-width: 0; }
+      .search-field label {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--heading);
+        font-size: 0.9rem;
+        font-weight: 750;
+      }
+      .result-count { margin: 22px 0 0; font-weight: 700; }
+      .empty-state { text-align: center; }
+      .empty-state p { max-width: 620px; margin: 0 auto; }
+      .empty-state .actions { justify-content: center; }
 
       .flow-row {
         display: flex;
@@ -323,9 +490,20 @@
         box-shadow: 0 10px 22px rgba(240,183,87,0.12);
       }
       .alert p { margin-top: 6px; color: inherit; }
+      .alert strong { color: inherit; }
 
       .step-content { white-space: normal; }
       .step-content p { margin: 10px 0; }
+      .step-content ul, .step-content ol { color: var(--muted); line-height: 1.75; }
+      .step-content + .step-content { margin-top: 14px; }
+      .step-summary {
+        margin-bottom: 24px;
+        padding: 16px 18px;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: rgba(255,255,255,0.82);
+      }
+      .step-summary p + p { margin-top: 5px; }
       .choice-list {
         display: grid;
         gap: 12px;
@@ -348,6 +526,7 @@
       }
 
       .configuration-field { max-width: 620px; margin-top: 18px; }
+      .configuration-field + .configuration-field { padding-top: 16px; border-top: 1px solid rgba(120,144,182,0.12); }
       .configuration-field label {
         display: block;
         margin-bottom: 7px;
@@ -365,10 +544,19 @@
         color: var(--heading);
         font: inherit;
       }
-      .errorlist { color: #b93333; }
+      .configuration-field select:hover, .form-card input:hover, .search-input:hover { border-color: rgba(47,103,221,0.48); }
+      .form-card { max-width: 520px; }
+      .form-card label {
+        display: block;
+        margin: 16px 0 7px;
+        color: var(--heading);
+        font-size: 0.9rem;
+        font-weight: 750;
+      }
+      .form-card .helptext { display: block; margin-top: 6px; color: var(--muted); font-size: 0.82rem; }
       .muted { color: var(--muted); font-size: 0.84rem; }
       .search-controls { margin-top: 10px; }
-      .search-input { max-width: 620px; }
+      .search-input { max-width: none; }
       .step-section-title { margin-top: 28px; }
 
       footer {
@@ -382,11 +570,26 @@
         .header-inner, .shell, .top-alert-inner { padding-left: 18px; padding-right: 18px; }
         .header-inner { align-items: flex-start; flex-wrap: wrap; }
         .brand-name { font-size: 0.9rem; }
-        .main-nav { justify-content: flex-start; }
+        .main-nav { width: 100%; justify-content: flex-start; gap: 8px 16px; }
         .page-header, .panel, .card { padding: 20px; }
         .shell { padding-top: 26px; }
         .button { width: 100%; }
         .actions { align-items: stretch; }
+        .page-title-row { flex-direction: column; gap: 8px; }
+        .page-title-row .actions { width: 100%; }
+        .section-heading { align-items: flex-start; flex-direction: column; }
+        .search-form { align-items: stretch; flex-direction: column; }
+        .search-form .button { width: 100%; }
+        .flow-row { align-items: stretch; flex-direction: column; }
+        .flow-row .inline-form, .flow-row .inline-form .button { width: 100%; }
+        .top-alert-inner { align-items: flex-start; text-align: left; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+        }
       }
     </style>
   </head>
@@ -408,11 +611,12 @@
         </a>
 
         <nav class="main-nav" aria-label="Main navigation">
-          <a href="{% url 'troubleshooting:home' %}">Home</a>
+          <a href="{% url 'troubleshooting:home' %}"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>Home</a>
           {% if request.user.is_authenticated %}
-            <a href="{% url 'troubleshooting:product_list' %}">Products</a>
-            <a href="{% url 'troubleshooting:search' %}">Search</a>
+            <a href="{% url 'troubleshooting:product_list' %}"{% if request.resolver_match.url_name == 'product_list' %} aria-current="page"{% endif %}>Products</a>
+            <a href="{% url 'troubleshooting:search' %}"{% if request.resolver_match.url_name == 'search' %} aria-current="page"{% endif %}>Search</a>
             {% if request.user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
+            <span class="user-label">{{ request.user.get_username }}</span>
             <form class="nav-form" method="post" action="{% url 'troubleshooting:logout' %}">
               {% csrf_token %}
               <button type="submit">Sign out</button>

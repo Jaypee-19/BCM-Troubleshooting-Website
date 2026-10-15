@@ -3,12 +3,21 @@
 {% block title %}{{ product.name }} · Coming soon · BCM-Troubleshooting Web{% endblock %}
 
 {% block content %}
-  <div class="breadcrumb"><a href="{% url 'troubleshooting:product_list' %}">Products</a></div>
-  <div class="eyebrow">Coming soon</div>
-  <h1>{{ product.name }}</h1>
-  <section class="panel">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{% url 'troubleshooting:product_list' %}">Products</a>
+    <span class="breadcrumb-separator" aria-hidden="true">›</span>
+    <span aria-current="page">{{ product.name }}</span>
+  </nav>
+  <header class="page-header">
+    <div class="eyebrow">Guide coming soon</div>
+    <h1>{{ product.name }}</h1>
+    {% if product.description %}<p class="intro">{{ product.description|linebreaksbr }}</p>{% endif %}
+  </header>
+  <section class="panel empty-state">
     <h2>This troubleshooting guide is not published yet</h2>
-    <p>An administrator will make this product available when its troubleshooting flows are ready.</p>
-    <a class="button secondary" href="{% url 'troubleshooting:product_list' %}">Back to products</a>
+    <p>An administrator will publish this product’s troubleshooting guide when its flows are ready. In the meantime, choose another product range.</p>
+    <div class="actions">
+      <a class="button secondary" href="{% url 'troubleshooting:product_list' %}">Browse available products</a>
+    </div>
   </section>
 {% endblock %}

@@ -3,19 +3,28 @@
 {% block title %}{{ step.title }} · {{ flow.name }} · BCM-Troubleshooting Web{% endblock %}
 
 {% block content %}
-  <div class="breadcrumb">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
     <a href="{% url 'troubleshooting:product_list' %}">Product ranges</a>
-    / <a href="{% url 'troubleshooting:product_detail' flow.problem.product_range.id %}">{{ flow.problem.product_range.name }}</a>
-    / {{ flow.problem.name }}
-  </div>
+    <span class="breadcrumb-separator" aria-hidden="true">›</span>
+    <a href="{% url 'troubleshooting:product_detail' flow.problem.product_range.id %}">{{ flow.problem.product_range.name }}</a>
+    <span class="breadcrumb-separator" aria-hidden="true">›</span>
+    <span>{{ flow.problem.name }}</span>
+    <span class="breadcrumb-separator" aria-hidden="true">›</span>
+    <span aria-current="page">{{ flow.name }}</span>
+  </nav>
 
-  <div class="eyebrow">{{ flow.name }}</div>
-  <h1>{{ step.title }}</h1>
-  <div class="step-meta">Step {{ visited_step_number }} of up to {{ active_step_count }}</div>
-  <div class="progress-track" role="progressbar" aria-label="Troubleshooting progress"
-       aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ progress_percent }}">
-    <div class="progress-fill" style="width: {{ progress_percent }}%"></div>
-  </div>
+  <header class="page-header">
+    <div class="eyebrow">{{ flow.name }}</div>
+    <h1>{{ step.title }}</h1>
+    <div class="progress-label">
+      <span class="step-meta">Step {{ visited_step_number }} of up to {{ active_step_count }}</span>
+      <span class="step-meta">{{ progress_percent }}% complete</span>
+    </div>
+    <div class="progress-track" role="progressbar" aria-label="Troubleshooting progress"
+         aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ progress_percent }}">
+      <div class="progress-fill" style="width: {{ progress_percent }}%"></div>
+    </div>
+  </header>
 
   {% if step.warning %}
     <aside class="alert" role="note">
@@ -25,11 +34,14 @@
   {% endif %}
 
   <section class="panel">
-    <div class="eyebrow">{{ step.get_step_type_display }}</div>
+    <div class="step-type-badge">{{ step.get_step_type_display }}</div>
     {% if step.instructions %}<div class="step-content">{{ step.instructions|linebreaks }}</div>{% endif %}
     {% if step.details %}<div class="step-content">{{ step.details|linebreaks }}</div>{% endif %}
     {% if step.notes %}
-      <p><strong>Note:</strong> {{ step.notes|linebreaksbr }}</p>
+      <aside class="alert" role="note">
+        <strong>Additional note</strong>
+        <p>{{ step.notes|linebreaksbr }}</p>
+      </aside>
     {% endif %}
 
     {% if images %}
@@ -55,7 +67,8 @@
     {% endif %}
 
     {% if choices %}
-      <h2 class="step-section-title">Choose what you found</h2>
+      <h2 class="step-section-title">What did you find?</h2>
+      <p>Select the result that best matches your check to continue.</p>
       <div class="choice-list">
         {% for choice in choices %}
           <form class="choice-form" method="post"
@@ -66,15 +79,20 @@
         {% endfor %}
       </div>
     {% elif step.step_type == "resolution" %}
-      <p><strong>Resolution step:</strong> this path has reached its endpoint.</p>
+      <aside class="alert" role="status">
+        <strong>Resolution reached</strong>
+        <p>This troubleshooting path has reached its endpoint.</p>
+      </aside>
     {% else %}
-      <p class="muted">This path has no further choices.</p>
+      <p class="muted">No further choices are available for this step.</p>
     {% endif %}
 
-    {% if previous_step_id %}
-      <div class="actions">
-        <a class="button secondary" href="{% url 'troubleshooting:step_detail' flow.id previous_step_id %}">Previous step</a>
-      </div>
-    {% endif %}
+    <div class="actions">
+      {% if previous_step_id %}
+        <a class="button secondary" href="{% url 'troubleshooting:step_detail' flow.id previous_step_id %}">Back to previous step</a>
+      {% else %}
+        <a class="quiet-link" href="{% url 'troubleshooting:product_detail' flow.problem.product_range.id %}">Exit this guide</a>
+      {% endif %}
+    </div>
   </section>
 {% endblock %}

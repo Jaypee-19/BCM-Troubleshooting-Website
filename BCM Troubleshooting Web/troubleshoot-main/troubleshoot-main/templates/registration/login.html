@@ -3,24 +3,31 @@
 {% block title %}Sign in · BCM-Troubleshooting Web{% endblock %}
 
 {% block content %}
-  <div class="eyebrow">Technician access</div>
-  <h1>Sign in to continue</h1>
-  <p class="intro">Use your authorized account to access troubleshooting flows and procedure files.</p>
-  <section class="panel form-card">
+  <header class="page-header">
+    <div class="eyebrow">Technician access</div>
+    <h1>Welcome back</h1>
+    <p class="intro">Sign in with your authorized BCM account to access product guides and troubleshooting procedures.</p>
+  </header>
+  <section class="panel form-card" aria-labelledby="login-heading">
+    <h2 id="login-heading">Sign in</h2>
+    {% if form.non_field_errors %}
+      <div class="form-error" role="alert">{{ form.non_field_errors }}</div>
+    {% endif %}
     <form method="post">
       {% csrf_token %}
-      {{ form.non_field_errors }}
       {% for field in form %}
         <div>
           {{ field.label_tag }}
           {{ field }}
-          {{ field.errors }}
+          {% if field.help_text %}<span class="helptext">{{ field.help_text }}</span>{% endif %}
+          {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
         </div>
       {% endfor %}
       {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
       <div class="actions">
-        <button class="button" type="submit">Sign in</button>
+        <button class="button" type="submit">Sign in securely</button>
       </div>
     </form>
+    <p class="muted">Need access? Contact your BCM administrator.</p>
   </section>
 {% endblock %}

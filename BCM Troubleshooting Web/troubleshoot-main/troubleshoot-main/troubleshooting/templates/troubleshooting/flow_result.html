@@ -3,22 +3,35 @@
 {% block title %}Troubleshooting path complete · {{ flow.name }} · BCM-Troubleshooting Web{% endblock %}
 
 {% block content %}
-  <div class="eyebrow">Troubleshooting path complete</div>
-  <h1>{{ ending_step.title }}</h1>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{% url 'troubleshooting:product_list' %}">Products</a>
+    <span class="breadcrumb-separator" aria-hidden="true">›</span>
+    <a href="{% url 'troubleshooting:product_detail' flow.problem.product_range.id %}">{{ flow.problem.product_range.name }}</a>
+    <span class="breadcrumb-separator" aria-hidden="true">›</span>
+    <span aria-current="page">Result</span>
+  </nav>
+  <header class="page-header">
+    <div class="eyebrow">Troubleshooting complete</div>
+    <h1>{{ ending_step.title }}</h1>
+    <p class="intro">You’ve reached the end of “{{ flow.name }}”. Review the result and any supporting procedure below.</p>
+  </header>
   <section class="panel">
-    <h2>This path has reached an endpoint</h2>
-    {% if outcome %}<p>Your selected finding: <strong>{{ outcome }}</strong></p>{% endif %}
+    <div class="alert" role="status">
+      <strong>Recommended result</strong>
+      {% if outcome %}<p>{{ outcome }}</p>{% endif %}
+      <p>This path has reached an endpoint.</p>
+    </div>
     {% if ending_step.details %}<div class="step-content">{{ ending_step.details|linebreaks }}</div>{% endif %}
     {% if ending_step.guide_file %}
       <div class="actions">
-        <a class="button" href="{% url 'troubleshooting:download_guide' flow.id ending_step.id %}">Download detailed procedure</a>
+        <a class="button" href="{% url 'troubleshooting:download_guide' flow.id ending_step.id %}">Download procedure</a>
       </div>
     {% endif %}
     <div class="actions">
       {% if previous_step_id %}
-        <a class="button secondary" href="{% url 'troubleshooting:step_detail' flow.id previous_step_id %}">Go back</a>
+        <a class="button secondary" href="{% url 'troubleshooting:step_detail' flow.id previous_step_id %}">Review previous step</a>
       {% endif %}
-      <a class="quiet-link" href="{% url 'troubleshooting:product_detail' flow.problem.product_range.id %}">Choose another problem</a>
+      <a class="button secondary" href="{% url 'troubleshooting:product_detail' flow.problem.product_range.id %}">Choose another issue</a>
     </div>
   </section>
 {% endblock %}

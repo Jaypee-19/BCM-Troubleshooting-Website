@@ -6,16 +6,16 @@
   <header class="page-header">
     <div class="eyebrow">BCM Troubleshooting Guide</div>
     <h1>Find the next right step.</h1>
-    <p class="intro">Follow clear, equipment-specific troubleshooting flows. Each answer leads to the next relevant check, corrective action, or full procedure.</p>
+    <p class="intro">Get clear, equipment-specific troubleshooting guidance. Choose your equipment, identify the issue, then follow the checks to a recommended next action.</p>
   </header>
 
   <section class="panel">
     {% if request.user.is_authenticated %}
-      <h2>Ready to troubleshoot?</h2>
-      <p>Select a product range to review active problems, guided steps, and supporting procedure files.</p>
+      <h2>Start troubleshooting</h2>
+      <p>Pick the equipment you’re working on. We’ll use your setup and symptoms to find the relevant guide.</p>
       <div class="actions">
-        <a class="button" href="{% url 'troubleshooting:product_list' %}">Open troubleshooting guide</a>
-        <a class="button secondary" href="{% url 'troubleshooting:search' %}">Search the guide</a>
+        <a class="button" href="{% url 'troubleshooting:product_list' %}">Choose equipment</a>
+        <a class="button secondary" href="{% url 'troubleshooting:search' %}">Search by symptom</a>
       </div>
     {% else %}
       <h2>Sign in to access the guide</h2>
@@ -26,21 +26,27 @@
     {% endif %}
   </section>
 
-  <section class="card-grid" aria-label="Support overview">
+  <section aria-label="How troubleshooting works">
+    <div class="section-heading">
+      <h2>How it works</h2>
+      <p>Three simple steps to get relevant guidance.</p>
+    </div>
+    <div class="card-grid">
     <article class="card">
-      <div class="eyebrow">01</div>
-      <h2>Equipment-specific paths</h2>
-      <p>Start from the correct product line and move through the most relevant system checks.</p>
+      <div class="eyebrow">Step 01</div>
+      <h2>Choose equipment</h2>
+      <p>Select a product range and tell us which equipment configuration you have.</p>
     </article>
     <article class="card">
-      <div class="eyebrow">02</div>
-      <h2>Actionable guidance</h2>
-      <p>Each step narrows the issue and guides the next action without unnecessary detours.</p>
+      <div class="eyebrow">Step 02</div>
+      <h2>Describe the issue</h2>
+      <p>Choose the symptom and answer a few focused questions about what you observe.</p>
     </article>
     <article class="card">
-      <div class="eyebrow">03</div>
-      <h2>Fast issue resolution</h2>
-      <p>Use search, product selection, and guided results to reach the right resolution quickly.</p>
+      <div class="eyebrow">Step 03</div>
+      <h2>Follow guided checks</h2>
+      <p>Work through clear checks and review the recommended action or supporting procedure.</p>
     </article>
+    </div>
   </section>
 {% endblock %}

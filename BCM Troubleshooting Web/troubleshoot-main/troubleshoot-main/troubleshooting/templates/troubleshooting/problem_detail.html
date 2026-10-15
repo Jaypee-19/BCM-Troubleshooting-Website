@@ -3,62 +3,89 @@
 {% block title %}{{ problem.name }} · {{ product.name }} · BCM-Troubleshooting Web{% endblock %}
 
 {% block content %}
-  <div class="breadcrumb">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
     <a href="{% url 'troubleshooting:product_list' %}">Products</a>
-    / <a href="{% url 'troubleshooting:product_detail' product.id %}">{{ product.name }}</a>
-    / {{ problem.name }}
-  </div>
-  <div class="eyebrow">Identify the issue</div>
-  <h1>{{ problem.name }}</h1>
-  {% if problem.description %}<p class="intro">{{ problem.description|linebreaksbr }}</p>{% endif %}
+    <span class="breadcrumb-separator" aria-hidden="true">›</span>
+    <a href="{% url 'troubleshooting:product_detail' product.id %}">{{ product.name }}</a>
+    <span class="breadcrumb-separator" aria-hidden="true">›</span>
+    <span aria-current="page">{{ problem.name }}</span>
+  </nav>
+
+  <header class="page-header">
+    <div class="eyebrow">Step 2 · Identify the issue</div>
+    <h1>{{ problem.name }}</h1>
+    {% if problem.description %}<p class="intro">{{ problem.description|linebreaksbr }}</p>{% endif %}
+  </header>
 
   {% if diagnosis_form %}
+    <ol class="workflow-steps" aria-label="Troubleshooting progress">
+      <li>1. Equipment</li>
+      <li aria-current="step">2. Problem details</li>
+      <li>3. Guided checks</li>
+    </ol>
     <section class="panel">
-      <h2>Check the equipment and status</h2>
-      <p>Answer the questions that apply to this problem to find the matching guide.</p>
+      <h2>Tell us what you’re seeing</h2>
+      <p class="form-intro">Answer the questions below to find the troubleshooting guide that best matches your equipment and symptoms.</p>
       <form method="post">
         {% csrf_token %}
-        {{ diagnosis_form.non_field_errors }}
+        {% if diagnosis_form.non_field_errors %}
+          <div class="form-error" role="alert">{{ diagnosis_form.non_field_errors }}</div>
+        {% endif %}
         {% for field in diagnosis_form %}
           <div class="configuration-field">
-            {{ field.label_tag }}
+            <div class="field-label-row">
+              {{ field.label_tag }}
+              {% if field.field.required %}<span class="required-mark">Required</span>{% endif %}
+            </div>
             {{ field }}
             {% if field.help_text %}<p class="muted">{{ field.help_text|linebreaksbr }}</p>{% endif %}
-            {{ field.errors }}
+            {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
           </div>
         {% empty %}
           <p class="muted">No additional diagnostic questions are configured for this problem.</p>
         {% endfor %}
         <div class="actions">
-          <button class="button" type="submit">Find matching troubleshooting</button>
+          <button class="button" type="submit">Show matching guides</button>
+          <a class="quiet-link" href="{% url 'troubleshooting:product_detail' product.id %}">Choose a different issue</a>
         </div>
       </form>
     </section>
   {% elif flows %}
-    <p class="intro">Choose a matching troubleshooting guide.</p>
-    <div class="actions">
-      <a class="button secondary" href="?edit=1">Update answers</a>
-    </div>
+    <ol class="workflow-steps" aria-label="Troubleshooting progress">
+      <li>1. Equipment</li>
+      <li>2. Problem details</li>
+      <li aria-current="step">3. Guided checks</li>
+    </ol>
     <section class="panel">
-      <h2>Matching troubleshooting guides</h2>
+      <div class="section-heading">
+        <div>
+          <h2>Recommended guides</h2>
+          <p>Choose the guide that best matches your situation.</p>
+        </div>
+        <a class="quiet-link" href="?edit=1">Update answers</a>
+      </div>
       {% for flow in flows %}
         <div class="flow-row">
           <div>
+            <span class="flow-kicker">Guide {{ forloop.counter }}</span>
             <strong>{{ flow.name }}</strong>
             {% if flow.description %}<p>{{ flow.description|linebreaksbr }}</p>{% endif %}
           </div>
           <form class="inline-form" method="post" action="{% url 'troubleshooting:flow_start' flow.id %}">
             {% csrf_token %}
-            <button class="button" type="submit">Start troubleshooting</button>
+            <button class="button" type="submit">Start this guide</button>
           </form>
         </div>
       {% endfor %}
     </section>
   {% elif diagnosis_complete %}
-    <section class="panel">
+    <section class="panel empty-state">
       <h2>No matching troubleshooting guide yet</h2>
       <p>No published flow matches these answers. Ask an administrator to review this product, problem, and its flow requirements.</p>
-      <a class="button secondary" href="?edit=1">Review answers</a>
+      <div class="actions">
+        <a class="button secondary" href="?edit=1">Review answers</a>
+        <a class="quiet-link" href="{% url 'troubleshooting:product_detail' product.id %}">Choose another issue</a>
+      </div>
     </section>
   {% endif %}
 {% endblock %}

@@ -11,28 +11,136 @@
     color: #edf4f8;
   }
 
+  .admin-dashboard a:focus-visible,
+  .admin-dashboard button:focus-visible,
+  .admin-dashboard summary:focus-visible {
+    outline: 3px solid #f4d15d;
+    outline-offset: 3px;
+  }
+
   .admin-page-title {
     margin: 0;
-    padding: 18px 18px 20px;
-    font-size: 2.2rem;
-    font-weight: 300;
-    letter-spacing: -0.05em;
+    padding: 22px 22px 8px;
+    font-size: clamp(1.8rem, 3vw, 2.35rem);
+    font-weight: 400;
+    letter-spacing: -0.04em;
     color: #edf4f8;
+  }
+
+  .admin-page-intro {
+    margin: 0;
+    padding: 0 22px 20px;
+    color: #c0d0d9;
+    line-height: 1.6;
   }
 
   .admin-content-grid {
     display: grid;
     grid-template-columns: minmax(0, 2.2fr) minmax(260px, 0.9fr);
     gap: 20px;
-    padding: 0 18px 0 18px;
+    padding: 0 22px;
   }
 
   .admin-main-panel,
   .admin-side-panel {
     background: rgba(35, 46, 54, 0.96);
     border: 1px solid rgba(164, 182, 196, 0.12);
-    border-radius: 0;
+    border-radius: 10px;
     overflow: hidden;
+  }
+
+  .admin-main-panel { min-width: 0; }
+
+  .admin-guide {
+    margin: 0;
+    padding: 20px;
+    border-bottom: 1px solid rgba(164, 182, 196, 0.16);
+    background: rgba(18, 31, 39, 0.62);
+  }
+
+  .admin-guide h2,
+  .admin-checklist h2 {
+    margin: 0 0 6px;
+    color: #edf4f8;
+    font-size: 1.15rem;
+  }
+
+  .admin-guide > p,
+  .admin-checklist > p {
+    margin: 0;
+    color: #b8c9d2;
+    line-height: 1.55;
+  }
+
+  .admin-steps {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 16px 0 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: admin-step;
+  }
+
+  .admin-step {
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid rgba(164, 182, 196, 0.16);
+    border-radius: 8px;
+    background: rgba(41, 54, 63, 0.8);
+    counter-increment: admin-step;
+  }
+
+  .admin-step-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    margin: 0;
+    color: #edf4f8;
+    font-size: 0.98rem;
+    font-weight: 700;
+  }
+
+  .admin-step-title::before {
+    display: inline-grid;
+    width: 23px;
+    height: 23px;
+    flex: 0 0 23px;
+    place-items: center;
+    border-radius: 50%;
+    background: #8ec1d7;
+    color: #10242f;
+    content: counter(admin-step);
+    font-size: 0.78rem;
+    font-weight: 800;
+  }
+
+  .admin-step p {
+    margin: 8px 0 12px 32px;
+    color: #b8c9d2;
+    font-size: 0.87rem;
+    line-height: 1.5;
+  }
+
+  .admin-step-link {
+    display: inline-flex;
+    min-height: 36px;
+    align-items: center;
+    justify-content: center;
+    margin-left: 32px;
+    padding: 7px 12px;
+    border: 1px solid rgba(142, 193, 215, 0.35);
+    border-radius: 6px;
+    background: rgba(142, 193, 215, 0.12);
+    color: #c9edff !important;
+    font-size: 0.84rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .admin-step-link:hover {
+    background: rgba(142, 193, 215, 0.22);
+    text-decoration: underline;
   }
 
   .admin-app-group {
@@ -48,7 +156,7 @@
     letter-spacing: 0.13em;
     text-transform: uppercase;
     font-weight: 800;
-    padding: 10px 16px;
+    padding: 11px 16px;
     border: 0;
   }
 
@@ -62,9 +170,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    min-height: 52px;
-    padding: 0 16px;
+    gap: 18px;
+    min-height: 66px;
+    padding: 10px 16px;
     border-top: 1px solid rgba(164, 182, 196, 0.16);
     background: rgba(74, 89, 96, 0.16);
   }
@@ -79,20 +187,37 @@
     font-weight: 500;
   }
 
+  .admin-model-description {
+    display: block;
+    max-width: 680px;
+    margin-top: 4px;
+    color: #b5c5ce;
+    font-size: 0.82rem;
+    line-height: 1.45;
+  }
+
   .admin-model-actions {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 14px;
     white-space: nowrap;
   }
 
   .admin-link {
+    display: inline-flex;
+    min-height: 36px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 9px;
+    border: 1px solid transparent;
+    border-radius: 6px;
     font-size: 0.82rem;
     font-weight: 700;
     text-decoration: none;
     letter-spacing: 0.02em;
     color: #b6dced;
   }
+  .admin-link:hover { background: rgba(255,255,255,0.06); text-decoration: underline; }
 
   .admin-link.add-link {
     color: #71e4a4;
@@ -131,6 +256,19 @@
     padding: 0 16px 16px;
   }
 
+  .admin-checklist {
+    padding: 16px;
+    border-top: 1px solid rgba(164, 182, 196, 0.12);
+  }
+
+  .admin-checklist ol {
+    margin: 12px 0 0;
+    padding-left: 20px;
+    color: #c8d7df;
+    font-size: 0.88rem;
+    line-height: 1.8;
+  }
+
   .admin-side-section h3 {
     margin: 0;
     padding: 18px 0 12px;
@@ -146,6 +284,70 @@
     padding-top: 4px;
   }
 
+  .admin-help-details {
+    position: relative;
+    display: inline-block;
+    margin-left: 7px;
+    vertical-align: middle;
+  }
+
+  .admin-help-details summary {
+    display: inline-grid;
+    width: 20px;
+    height: 20px;
+    place-items: center;
+    border: 1px solid rgba(185, 225, 245, 0.68);
+    border-radius: 50%;
+    color: #c9edff;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 800;
+    list-style: none;
+  }
+
+  .admin-help-details summary::-webkit-details-marker { display: none; }
+  .admin-help-details summary:hover { background: rgba(185, 225, 245, 0.14); }
+
+  .admin-help-details[open] > span {
+    position: absolute;
+    z-index: 10;
+    right: 0;
+    bottom: 28px;
+    width: min(280px, 72vw);
+    padding: 11px 13px;
+    border: 1px solid rgba(164, 182, 196, 0.3);
+    border-radius: 7px;
+    background: #0f1c23;
+    color: #edf4f8;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    font-size: 0.82rem;
+    font-weight: 400;
+    line-height: 1.5;
+    white-space: normal;
+  }
+
+  .admin-dashboard .admin-help-details[open] > span { white-space: normal; }
+
+  #content .admin-help-details {
+    color: #edf4f8;
+  }
+
+  #content .admin-help-details[open] > span {
+    position: absolute;
+    z-index: 20;
+    width: min(280px, 70vw);
+    padding: 10px 12px;
+    border: 1px solid rgba(164, 182, 196, 0.3);
+    border-radius: 7px;
+    background: #0f1c23;
+    color: #edf4f8;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    font-size: 0.82rem;
+    font-weight: 400;
+    line-height: 1.5;
+    white-space: normal;
+  }
+
   @media (max-width: 900px) {
     .admin-content-grid {
       grid-template-columns: 1fr;
@@ -154,6 +356,17 @@
     .admin-page-title {
       font-size: 1.85rem;
     }
+
+    .admin-side-panel { order: -1; }
+  }
+
+  @media (max-width: 600px) {
+    .admin-page-title { padding-right: 16px; padding-left: 16px; }
+    .admin-page-intro { padding-right: 16px; padding-left: 16px; }
+    .admin-content-grid { padding-right: 12px; padding-left: 12px; }
+    .admin-steps { grid-template-columns: 1fr; }
+    .admin-model-row { align-items: flex-start; flex-direction: column; gap: 8px; }
+    .admin-model-actions { width: 100%; justify-content: flex-start; }
   }
 </style>
 {% endblock %}
@@ -161,9 +374,61 @@
 {% block content %}
 <div class="admin-dashboard">
   <h1 class="admin-page-title">{{ title }}</h1>
+  <p class="admin-page-intro">Create equipment guides, configure the questions users see, and connect each troubleshooting decision to its next step.</p>
 
   <div class="admin-content-grid">
     <section class="admin-main-panel">
+      <section class="admin-guide" aria-labelledby="admin-guide-heading">
+        <h2 id="admin-guide-heading">Build a troubleshooting guide</h2>
+        <p>Follow these steps in order. You can save at any point and come back to finish the guide.</p>
+        <ol class="admin-steps">
+          {% for app in app_list %}
+            {% for model in app.models %}
+              {% if model.object_name == "ProductRange" and model.add_url %}
+                <li class="admin-step">
+                  <h3 class="admin-step-title">Add a product range</h3>
+                  <p>Create the equipment family users will select first, such as VSAT or Starlink.</p>
+                  <a class="admin-step-link" href="{{ model.add_url }}" title="Create a new product range. This is the first step when setting up a guide.">Add product range</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+          {% for app in app_list %}
+            {% for model in app.models %}
+              {% if model.object_name == "Problem" and model.add_url %}
+                <li class="admin-step">
+                  <h3 class="admin-step-title">Add a problem</h3>
+                  <p>Describe one issue or symptom and link it to the product range it affects.</p>
+                  <a class="admin-step-link" href="{{ model.add_url }}" title="Create a problem and choose the product range it belongs to.">Add problem</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+          {% for app in app_list %}
+            {% for model in app.models %}
+              {% if model.object_name == "ConfigurationQuestion" and model.add_url %}
+                <li class="admin-step">
+                  <h3 class="admin-step-title">Configure questions and options</h3>
+                  <p>Set where each question appears and add its answer options before building conditional guide paths.</p>
+                  <a class="admin-step-link" href="{{ model.add_url }}" title="Create a setup or diagnosis question and add answer options.">Add question</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+          {% for app in app_list %}
+            {% for model in app.models %}
+              {% if model.object_name == "TroubleshootingFlow" and model.add_url %}
+                <li class="admin-step">
+                  <h3 class="admin-step-title">Build the troubleshooting flow</h3>
+                  <p>Add its steps and answer choices. Save the flow, then reopen it to select its starting step.</p>
+                  <a class="admin-step-link" href="{{ model.add_url }}" title="Create a flow for a problem. Add its steps, save, then select a starting step.">Add flow</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+        </ol>
+      </section>
+
       {% if app_list %}
         {% for app in app_list %}
           <div class="admin-app-group">
@@ -171,13 +436,36 @@
             <ul class="admin-model-list">
               {% for model in app.models %}
                 <li class="admin-model-row">
-                  <span class="admin-model-name">{{ model.name }}</span>
+                  <div>
+                    <span class="admin-model-name">{{ model.name }}</span>
+                    {% if model.object_name == "ProductRange" %}
+                      <span class="admin-model-description">Equipment families users can troubleshoot.</span>
+                    {% elif model.object_name == "Problem" %}
+                      <span class="admin-model-description">Symptoms and issues associated with a product range.</span>
+                    {% elif model.object_name == "ConfigurationQuestion" %}
+                      <span class="admin-model-description">Questions users answer about equipment or a problem.</span>
+                    {% elif model.object_name == "ConfigurationOption" %}
+                      <span class="admin-model-description">Selectable answers for a configuration question.</span>
+                    {% elif model.object_name == "TroubleshootingFlow" %}
+                      <span class="admin-model-description">Guides that connect a problem to ordered troubleshooting steps.</span>
+                    {% elif model.object_name == "TroubleshootingStep" %}
+                      <span class="admin-model-description">Instructions, decisions, resolutions, and procedure files.</span>
+                    {% elif model.object_name == "StepChoice" %}
+                      <span class="admin-model-description">Answers that route users to the next step in a guide.</span>
+                    {% elif model.object_name == "StepImage" %}
+                      <span class="admin-model-description">Images and diagrams shown alongside a troubleshooting step.</span>
+                    {% elif model.object_name == "User" %}
+                      <span class="admin-model-description">Accounts, access permissions, and administrator settings.</span>
+                    {% elif model.object_name == "Group" %}
+                      <span class="admin-model-description">Reusable permissions for groups of administrator accounts.</span>
+                    {% endif %}
+                  </div>
                   <div class="admin-model-actions">
                     {% if model.add_url %}
-                      <a class="admin-link add-link" href="{{ model.add_url }}">Add</a>
+                      <a class="admin-link add-link" href="{{ model.add_url }}" title="Add a new record to {{ model.name|lower }}.">Add</a>
                     {% endif %}
                     {% if model.admin_url %}
-                      <a class="admin-link change-link" href="{{ model.admin_url }}">Change</a>
+                      <a class="admin-link change-link" href="{{ model.admin_url }}" title="View or edit existing {{ model.name|lower }} records.">Manage</a>
                     {% endif %}
                   </div>
                 </li>
@@ -191,10 +479,19 @@
     </section>
 
     <aside class="admin-side-panel">
-      <h2 class="admin-side-title">Recent actions</h2>
+      <h2 class="admin-side-title">Before publishing</h2>
+      <div class="admin-checklist">
+        <p>Check each guide from a technician’s point of view:</p>
+        <ol>
+          <li>Product range and problem are active.</li>
+          <li>The flow has an active starting step.</li>
+          <li>Each answer points to the intended next step.</li>
+          <li>Configuration requirements match the intended equipment.</li>
+        </ol>
+      </div>
       <div class="admin-side-section">
-        <h3>My actions</h3>
-        <p class="admin-empty">None available</p>
+        <h3>Need help?</h3>
+        <p class="admin-empty">Use the <strong>?</strong> beside an action for a quick explanation. Field descriptions appear directly below the fields.</p>
       </div>
     </aside>
   </div>

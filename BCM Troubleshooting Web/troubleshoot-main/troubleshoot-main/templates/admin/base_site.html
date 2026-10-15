@@ -82,5 +82,154 @@
   .dashboard {
     background: var(--admin-bg);
   }
+
+  .admin-action-help {
+    position: relative;
+    display: inline-block;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  .admin-action-help summary {
+    display: inline-grid;
+    width: 20px;
+    height: 20px;
+    place-items: center;
+    border: 1px solid rgba(154, 211, 232, 0.78);
+    border-radius: 50%;
+    color: #9ad3e8;
+    cursor: pointer;
+    font-size: 0.75rem;
+    font-weight: 800;
+    list-style: none;
+  }
+
+  .admin-action-help summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .admin-action-help summary:hover {
+    background: rgba(154, 211, 232, 0.12);
+  }
+
+  .admin-action-help[open] > span {
+    position: absolute;
+    z-index: 100;
+    top: calc(100% + 7px);
+    left: 0;
+    width: min(290px, 72vw);
+    padding: 10px 12px;
+    border: 1px solid rgba(164, 182, 196, 0.35);
+    border-radius: 7px;
+    background: #0f1c23;
+    color: #edf4f8;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    font-size: 0.82rem;
+    font-weight: 400;
+    line-height: 1.5;
+    white-space: normal;
+  }
+
+  .aligned .help,
+  .form-row .help,
+  .fieldBox .help {
+    color: var(--admin-muted);
+    font-size: 0.84rem;
+    line-height: 1.5;
+  }
+
+  #content input[type="text"],
+  #content input[type="number"],
+  #content input[type="url"],
+  #content input[type="email"],
+  #content input[type="password"],
+  #content select,
+  #content textarea {
+    max-width: 100%;
+  }
+
+  #content input:focus-visible,
+  #content select:focus-visible,
+  #content textarea:focus-visible,
+  #content button:focus-visible,
+  #content a:focus-visible,
+  #content summary:focus-visible {
+    outline: 3px solid var(--admin-yellow);
+    outline-offset: 2px;
+  }
 </style>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const actionSelector = [
+      '#header button',
+      '#nav-sidebar button',
+      '#content button',
+      '#content input[type="submit"]',
+      '#content input[type="button"]',
+      '#content a.addlink',
+      '#content a.changelink',
+      '#content a.deletelink',
+      '#content .object-tools a',
+      '#content .actions a',
+      '#content a.add-row',
+      '#content .related-widget-wrapper-link',
+      '#nav-sidebar a.addlink',
+      '#nav-sidebar a.changelink',
+      '#nav-sidebar a.deletelink',
+      '.admin-dashboard .admin-link',
+      '.admin-dashboard .admin-step-link',
+    ].join(',');
+
+    function actionDescription(control, label) {
+      if (control.title) return control.title;
+      const text = label.toLowerCase();
+      if (text.includes('save and add another')) return 'Save these changes and open a blank form for another item.';
+      if (text.includes('save and continue editing')) return 'Save these changes and keep this item open.';
+      if (text.includes('save as new')) return 'Create a new item using these values without changing the original.';
+      if (text.includes('add another')) return 'Add another related item to this form. It will be saved when you save the parent item.';
+      if (text.includes('save')) return 'Save your changes. Required fields and validation rules will be checked first.';
+      if (text.includes('delete')) return 'Delete this item. You will be asked to confirm before it is removed.';
+      if (text.includes('toggle theme')) return 'Change the appearance of the administration site.';
+      if (text.includes('toggle navigation')) return 'Show or hide the administration navigation menu.';
+      if (text.includes('log out')) return 'End your administrator session securely.';
+      if (text.includes('change password')) return 'Open the form to update your account password.';
+      if (text.includes('view site')) return 'Open the technician-facing troubleshooting website.';
+      if (control.classList.contains('addlink') || text === 'add') return 'Open a form to create a new item.';
+      if (control.classList.contains('changelink') || text === 'change' || text === 'manage') return 'View and edit existing items.';
+      if (text.includes('search')) return 'Search the available items using the text entered in the search box.';
+      if (text === 'go') return 'Apply the selected action to the checked items.';
+      if (text.includes('clear')) return 'Remove the current filters and show the full list.';
+      if (text.includes('history')) return 'Review previous saved changes to this item.';
+      if (text.includes('view on site')) return 'Open the public-facing page for this item.';
+      return 'Activate this action: ' + label + '. Follow the instructions on this page before saving.';
+    }
+
+    document.querySelectorAll(actionSelector).forEach(function (control) {
+      if (control.dataset.helpAttached === 'true') return;
+
+      const label = (control.value || control.getAttribute('aria-label') || control.textContent || 'action')
+        .replace(/\s+/g, ' ')
+        .trim();
+      const description = actionDescription(control, label);
+      control.title = description;
+      control.dataset.helpAttached = 'true';
+
+      const help = document.createElement('details');
+      help.className = 'admin-action-help';
+      const summary = document.createElement('summary');
+      summary.textContent = '?';
+      summary.setAttribute('aria-label', 'Show help for ' + label);
+      summary.title = 'Show help for ' + label;
+      const helpText = document.createElement('span');
+      helpText.setAttribute('role', 'note');
+      helpText.textContent = description;
+      help.append(summary, helpText);
+      control.insertAdjacentElement('afterend', help);
+    });
+  });
+</script>
 {% endblock %}

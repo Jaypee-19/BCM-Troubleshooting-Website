@@ -5,31 +5,49 @@
 {% block content %}
   <header class="page-header">
     <div class="eyebrow">Troubleshooting guide</div>
-    <h1>Select a product range</h1>
-    <p class="intro">Choose a product with an available troubleshooting guide. More product guides will appear here as administrators publish them.</p>
+    <div class="page-title-row">
+      <div>
+        <h1>Select a product range</h1>
+        <p class="intro">Start by choosing the product range you need help with. We’ll guide you through the right checks and next steps.</p>
+      </div>
+      <div class="actions">
+        <a class="button secondary" href="{% url 'troubleshooting:search' %}">Search the guide</a>
+      </div>
+    </div>
   </header>
 
   {% if products %}
-    <div class="card-grid">
+    <section aria-labelledby="product-list-heading">
+      <div class="section-heading">
+        <h2 id="product-list-heading">Product ranges</h2>
+        <p>Select an available guide to continue.</p>
+      </div>
+      <div class="card-grid">
       {% for product in products %}
-        <article class="card">
+        <article class="card product-card">
           {% if product.image %}
             <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }} product image" loading="lazy" decoding="async">
           {% endif %}
+          {% if product.has_published_flows %}
+            <span class="product-status">Guide available</span>
+          {% else %}
+            <span class="product-status pending">Guide coming soon</span>
+          {% endif %}
           <h2>{{ product.name }}</h2>
-          {% if product.description %}<p>{{ product.description|linebreaksbr }}</p>{% endif %}
+          {% if product.description %}<p class="product-description">{{ product.description|linebreaksbr }}</p>{% endif %}
           <div class="actions">
             {% if product.has_published_flows %}
-            <a class="button" href="{% url 'troubleshooting:product_detail' product.id %}">View problems</a>
+              <a class="button" href="{% url 'troubleshooting:product_detail' product.id %}">Choose this product</a>
             {% else %}
-            <span class="button secondary" aria-disabled="true">Coming soon</span>
+              <span class="button secondary" aria-disabled="true">Coming soon</span>
             {% endif %}
           </div>
         </article>
       {% endfor %}
-    </div>
+      </div>
+    </section>
   {% else %}
-    <section class="panel">
+    <section class="panel empty-state">
       <h2>No active product ranges yet</h2>
       <p>An administrator needs to add and activate product ranges before troubleshooting can begin.</p>
     </section>

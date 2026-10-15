@@ -3,40 +3,65 @@
 {% block title %}{{ product.name }} problems · BCM-Troubleshooting Web{% endblock %}
 
 {% block content %}
-  <div class="breadcrumb"><a href="{% url 'troubleshooting:product_list' %}">Product ranges</a> / {{ product.name }}</div>
-  <div class="eyebrow">Product range</div>
-  <h1>{{ product.name }}</h1>
-  {% if product.description %}<p class="intro">{{ product.description|linebreaksbr }}</p>{% endif %}
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{% url 'troubleshooting:product_list' %}">Products</a>
+    <span class="breadcrumb-separator" aria-hidden="true">›</span>
+    <span aria-current="page">{{ product.name }}</span>
+  </nav>
+
+  <header class="page-header">
+    <div class="eyebrow">Product range</div>
+    <h1>{{ product.name }}</h1>
+    {% if product.description %}<p class="intro">{{ product.description|linebreaksbr }}</p>{% endif %}
+  </header>
 
   {% if configuration_form %}
+    <ol class="workflow-steps" aria-label="Troubleshooting progress">
+      <li aria-current="step">1. Equipment</li>
+      <li>2. Problem</li>
+      <li>3. Guided checks</li>
+    </ol>
     <section class="panel">
-      <h2>Tell us about this system</h2>
-      <p>Answer the equipment and configuration questions so we can show relevant troubleshooting steps.</p>
+      <h2>Tell us about your equipment</h2>
+      <p class="form-intro">These details help us show troubleshooting steps for your specific setup. Fields marked as required must be completed.</p>
       <form method="post">
         {% csrf_token %}
-        {{ configuration_form.non_field_errors }}
+        {% if configuration_form.non_field_errors %}
+          <div class="form-error" role="alert">{{ configuration_form.non_field_errors }}</div>
+        {% endif %}
         {% for field in configuration_form %}
           <div class="configuration-field">
-            {{ field.label_tag }}
+            <div class="field-label-row">
+              {{ field.label_tag }}
+              {% if field.field.required %}<span class="required-mark">Required</span>{% endif %}
+            </div>
             {{ field }}
             {% if field.help_text %}<p class="muted">{{ field.help_text|linebreaksbr }}</p>{% endif %}
-            {{ field.errors }}
+            {% if field.errors %}<div class="field-errors">{{ field.errors }}</div>{% endif %}
           </div>
         {% empty %}
           <p class="muted">No configuration questions are currently required for this product.</p>
         {% endfor %}
         <div class="actions">
-          <button class="button" type="submit">Find matching problems</button>
+          <button class="button" type="submit">Save equipment and continue</button>
+          <a class="quiet-link" href="{% url 'troubleshooting:product_list' %}">Back to products</a>
         </div>
       </form>
     </section>
   {% elif problems %}
-    <p class="intro">Choose the problem you are facing to see the matching troubleshooting flows.</p>
-    <div class="actions">
-      <a class="button secondary" href="?edit=1">Update system configuration</a>
-    </div>
+    <ol class="workflow-steps" aria-label="Troubleshooting progress">
+      <li>1. Equipment</li>
+      <li aria-current="step">2. Problem</li>
+      <li>3. Guided checks</li>
+    </ol>
     <section class="panel">
-      <h2>Choose a problem</h2>
+      <div class="section-heading">
+        <div>
+          <h2>What do you need help with?</h2>
+          <p>Select the symptom or issue that best matches what you’re experiencing.</p>
+        </div>
+        <a class="quiet-link" href="?edit=1">Change equipment details</a>
+      </div>
       {% for problem in problems %}
         <div class="problem-block">
           <h3>{{ problem.name }}</h3>
@@ -46,9 +71,12 @@
       {% endfor %}
     </section>
   {% else %}
-    <section class="panel">
+    <section class="panel empty-state">
       <h2>No active problems yet</h2>
       <p>An administrator can add troubleshooting problems for this product range.</p>
+      <div class="actions">
+        <a class="button secondary" href="{% url 'troubleshooting:product_list' %}">Back to products</a>
+      </div>
     </section>
   {% endif %}
 {% endblock %}
