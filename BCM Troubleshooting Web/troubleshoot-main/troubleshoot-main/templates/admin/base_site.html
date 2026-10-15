@@ -3,7 +3,15 @@
 {% block title %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
 {% block branding %}
-<h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
+<h1 id="site-name">
+  <a href="{% url 'admin:index' %}">
+    <span class="admin-brand-mark" aria-hidden="true">B</span>
+    <span class="admin-brand-copy">
+      <span class="admin-brand-title">{{ site_header|default:_('Django administration') }}</span>
+      <span class="admin-brand-subtitle">Administration portal</span>
+    </span>
+  </a>
+</h1>
 {% endblock %}
 
 {% block nav-sidebar %}{% endblock %}
@@ -37,43 +45,140 @@
   }
 
   #header {
-    background: linear-gradient(90deg, #7bb2c6 0%, #7ab0c2 100%) !important;
-    border-bottom: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px clamp(20px, 3vw, 44px);
+    flex-wrap: wrap;
     min-height: 82px;
-    box-shadow: none;
-    padding: 0;
+    padding: 10px clamp(14px, 2vw, 30px);
+    background:
+      linear-gradient(110deg, rgba(255,255,255,0.1), transparent 44%),
+      linear-gradient(110deg, #83bed1 0%, #75aabd 58%, #6b9db1 100%) !important;
+    border-bottom: 1px solid rgba(12, 31, 41, 0.18) !important;
+    box-shadow: 0 5px 18px rgba(4, 18, 27, 0.17);
   }
 
   #branding {
-    padding: 18px 24px;
-    min-height: 82px;
+    flex: 0 1 auto;
+    min-width: 0;
+    padding: 8px 0;
     display: flex;
     align-items: center;
   }
 
   #branding h1 {
     margin: 0;
-    font-size: 2.2rem;
-    font-weight: 300;
+    font-size: clamp(1.45rem, 2.15vw, 2rem);
+    font-weight: 500;
     letter-spacing: -0.04em;
     color: var(--admin-header-text);
-    line-height: 1.2;
+    line-height: 1.15;
   }
 
   #branding h1 a {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
     color: inherit;
     text-decoration: none;
+    text-wrap: balance;
+  }
+
+  .admin-brand-mark {
+    display: grid;
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 14px;
+    background: linear-gradient(145deg, #163d50, #0d2a39);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 4px 10px rgba(9,35,47,0.18);
+    color: #f4d15d;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.06em;
+  }
+
+  .admin-brand-copy {
+    display: grid;
+    gap: 4px;
+    min-width: 0;
+  }
+
+  .admin-brand-title {
+    display: block;
+  }
+
+  .admin-brand-subtitle {
+    display: block;
+    color: rgba(12, 31, 41, 0.72);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    line-height: 1.2;
+    text-transform: uppercase;
   }
 
   #user-tools {
-    color: rgba(15, 26, 34, 0.9);
-    font-weight: 600;
-    padding-right: 18px;
+    flex: 0 1 auto;
+    max-width: 100%;
+    margin: 0;
+    padding: 8px 12px;
+    border: 1px solid rgba(12, 31, 41, 0.18);
+    border-radius: 11px;
+    background: rgba(10, 35, 47, 0.1);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.12);
+    color: #102c39;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.8;
+    text-align: right;
+  }
+
+  #user-tools strong {
+    display: inline-block;
+    margin-left: 3px;
+    padding: 2px 7px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.42);
+    color: #092634;
+    letter-spacing: 0.025em;
   }
 
   #user-tools a {
-    color: rgba(15, 26, 34, 0.9);
+    display: inline-block;
+    margin: 2px 3px;
+    padding: 4px 9px;
+    border: 1px solid rgba(12, 31, 41, 0.2);
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #102c39;
+    font-size: 0.68rem;
+    letter-spacing: 0.035em;
     text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+
+  #user-tools a:hover,
+  #user-tools a:focus-visible {
+    border-color: rgba(12, 31, 41, 0.38);
+    background: rgba(255, 255, 255, 0.38);
+    color: #071b24;
+    text-decoration: none;
+  }
+
+  #user-tools .admin-action-help {
+    margin: 0 2px;
+  }
+
+  #user-tools .admin-action-help summary {
+    width: 18px;
+    height: 18px;
+    border-color: rgba(12, 31, 41, 0.38);
+    background: rgba(255, 255, 255, 0.2);
+    color: #102c39;
   }
 
   #content {
@@ -81,12 +186,12 @@
     background: var(--admin-bg);
   }
 
-  #toggle-nav-sidebar {
-    display: none !important;
-  }
-
   .dashboard {
     background: var(--admin-bg);
+  }
+
+  #toggle-nav-sidebar {
+    display: none !important;
   }
 
   .admin-action-help,
@@ -132,11 +237,12 @@
   .admin-field-help[open] > span,
   .admin-field-help:hover > span,
   .admin-field-help:focus-within > span {
-    position: absolute;
-    z-index: 100;
-    top: calc(100% + 7px);
-    left: 0;
-    width: min(260px, 72vw);
+    position: fixed;
+    z-index: 10000;
+    width: min(260px, calc(100vw - 24px));
+    max-height: calc(100vh - 24px);
+    box-sizing: border-box;
+    overflow-y: auto;
     padding: 9px 11px;
     border: 1px solid rgba(154, 211, 232, 0.25);
     border-radius: 8px;
@@ -147,6 +253,7 @@
     font-weight: 400;
     line-height: 1.5;
     white-space: normal;
+    overflow-wrap: anywhere;
   }
 
   .admin-field-help-source {
@@ -204,6 +311,60 @@
     outline: 2px solid var(--admin-yellow);
     outline-offset: 2px;
   }
+
+  @media (max-width: 900px) {
+    #header {
+      gap: 8px 16px;
+    }
+
+    #branding {
+      flex-basis: 100%;
+      padding-bottom: 2px;
+    }
+
+    #branding h1 {
+      font-size: clamp(1.4rem, 4vw, 1.9rem);
+    }
+
+    #user-tools {
+      flex-basis: 100%;
+      margin-left: 0;
+      text-align: left;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .admin-brand-mark {
+      width: 40px;
+      height: 40px;
+      flex-basis: 40px;
+      border-radius: 12px;
+      font-size: 1.15rem;
+    }
+
+    #branding h1 a {
+      gap: 10px;
+    }
+
+    #branding h1 {
+      font-size: 1.22rem;
+    }
+
+    .admin-brand-subtitle {
+      font-size: 0.6rem;
+      letter-spacing: 0.13em;
+    }
+
+    #user-tools {
+      padding: 6px 8px;
+      font-size: 0.68rem;
+    }
+
+    #user-tools a {
+      padding: 3px 6px;
+    }
+  }
+
 </style>
 {% endblock %}
 
@@ -225,6 +386,42 @@
       '.admin-dashboard .admin-step-link',
     ].join(',');
 
+    function positionHelp(help) {
+      const summary = help.querySelector('summary');
+      const popup = help.querySelector(':scope > span');
+      if (!summary || !popup) return;
+
+      const anchor = summary.getBoundingClientRect();
+      const popupRect = popup.getBoundingClientRect();
+      const margin = 12;
+      const gap = 8;
+      const left = Math.max(
+        margin,
+        Math.min(anchor.left, window.innerWidth - popupRect.width - margin)
+      );
+      const below = window.innerHeight - anchor.bottom - gap - margin;
+      const above = anchor.top - gap - margin;
+      let top = anchor.bottom + gap;
+
+      if (popupRect.height > below && above > below) {
+        top = anchor.top - popupRect.height - gap;
+      }
+      top = Math.max(
+        margin,
+        Math.min(top, window.innerHeight - popupRect.height - margin)
+      );
+
+      popup.style.left = left + 'px';
+      popup.style.top = top + 'px';
+    }
+
+    function positionVisibleHelp() {
+      document.querySelectorAll(
+        '.admin-action-help:hover, .admin-action-help:focus-within, .admin-action-help[open], ' +
+        '.admin-field-help:hover, .admin-field-help:focus-within, .admin-field-help[open]'
+      ).forEach(positionHelp);
+    }
+
     function createHelp(label, description, className) {
       const help = document.createElement('details');
       help.className = className;
@@ -236,8 +433,24 @@
       helpText.setAttribute('role', 'note');
       helpText.textContent = description;
       help.append(summary, helpText);
+      help.addEventListener('mouseenter', function () {
+        requestAnimationFrame(function () {
+          positionHelp(help);
+        });
+      });
+      help.addEventListener('focusin', function () {
+        requestAnimationFrame(function () {
+          positionHelp(help);
+        });
+      });
+      help.addEventListener('toggle', function () {
+        if (help.open) positionHelp(help);
+      });
       return help;
     }
+
+    window.addEventListener('resize', positionVisibleHelp);
+    window.addEventListener('scroll', positionVisibleHelp, true);
 
     function actionDescription(control, label) {
       if (control.title) return control.title;
