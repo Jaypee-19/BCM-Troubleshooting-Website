@@ -24,15 +24,16 @@
     --admin-dark-2: #1a252d;
     --admin-panel: rgba(41, 54, 63, 0.96);
     --admin-panel-alt: rgba(22, 34, 42, 0.98);
-    --admin-header: #7fb3c6;
-    --admin-header-text: #0c1f29;
+    --admin-header: linear-gradient(110deg, #8ec1d7 0%, #73a9bf 48%, #5d8ea5 100%);
+    --admin-header-text: #102f3d;
     --admin-text: #edf4f8;
     --admin-muted: #a8bac5;
     --admin-line: rgba(160, 179, 191, 0.2);
-    --admin-link: #b9e1f5;
-    --admin-blue: #9ad3e8;
-    --admin-green: #68dd9a;
-    --admin-yellow: #f4d15d;
+    --admin-link: #d5f0ff;
+    --admin-blue: #8ec1d7;
+    --admin-green: #64caa3;
+    --admin-accent: #1f4e5f;
+    --admin-accent-soft: rgba(31, 78, 95, 0.18);
   }
 
   html, body {
@@ -52,9 +53,7 @@
     flex-wrap: wrap;
     min-height: 82px;
     padding: 10px clamp(14px, 2vw, 30px);
-    background:
-      linear-gradient(110deg, rgba(255,255,255,0.1), transparent 44%),
-      linear-gradient(110deg, #83bed1 0%, #75aabd 58%, #6b9db1 100%) !important;
+    background: var(--admin-header) !important;
     border-bottom: 1px solid rgba(12, 31, 41, 0.18) !important;
     box-shadow: 0 5px 18px rgba(4, 18, 27, 0.17);
   }
@@ -85,6 +84,13 @@
     text-wrap: balance;
   }
 
+  #branding h1 a:link,
+  #branding h1 a:visited,
+  #branding h1 a:hover,
+  #branding h1 a:focus-visible {
+    color: var(--admin-header-text) !important;
+  }
+
   .admin-brand-mark {
     display: grid;
     width: 48px;
@@ -93,9 +99,9 @@
     place-items: center;
     border: 1px solid rgba(255, 255, 255, 0.55);
     border-radius: 14px;
-    background: linear-gradient(145deg, #163d50, #0d2a39);
+    background: linear-gradient(145deg, #173f51, #0b2a3a);
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 4px 10px rgba(9,35,47,0.18);
-    color: #f4d15d;
+    color: #dff6ff;
     font-size: 1.35rem;
     font-weight: 800;
     letter-spacing: -0.06em;
@@ -303,12 +309,12 @@
   #content button:focus-visible,
   #content a:focus-visible,
   #content summary:focus-visible {
-    outline: 3px solid var(--admin-yellow);
+    outline: 3px solid var(--admin-blue);
     outline-offset: 2px;
   }
 
   .admin-action-help summary:focus-visible {
-    outline: 2px solid var(--admin-yellow);
+    outline: 2px solid var(--admin-blue);
     outline-offset: 2px;
   }
 

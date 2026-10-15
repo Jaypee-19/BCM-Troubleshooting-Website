@@ -475,6 +475,10 @@ class TroubleshootingAdminAccessTests(TestCase):
         self.assertContains(response, 'admin-brand-mark')
         self.assertContains(response, 'Administration portal')
         self.assertContains(response, 'BCM-Troubleshooting Web administration')
+        self.assertContains(
+            response,
+            '<h1 class="admin-page-title">Manage troubleshooting content</h1>',
+        )
         self.assertContains(response, 'Build a troubleshooting guide')
         self.assertContains(response, 'Add product range')
         self.assertContains(response, 'Add problem')
@@ -483,6 +487,7 @@ class TroubleshootingAdminAccessTests(TestCase):
         self.assertContains(response, 'Before publishing')
         self.assertContains(response, 'Create a new product range')
         page = response.content.decode()
+        self.assertEqual(page.count('Manage troubleshooting content'), 2)
         self.assertLess(
             page.index('Add a product range'),
             page.index('Add a problem'),
