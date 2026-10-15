@@ -6,6 +6,8 @@
 <h1 id="site-name"><a href="{% url 'admin:index' %}">{{ site_header|default:_('Django administration') }}</a></h1>
 {% endblock %}
 
+{% block nav-sidebar %}{% endblock %}
+
 {% block extrastyle %}
 {{ block.super }}
 <style>
@@ -79,55 +81,84 @@
     background: var(--admin-bg);
   }
 
+  #toggle-nav-sidebar {
+    display: none !important;
+  }
+
   .dashboard {
     background: var(--admin-bg);
   }
 
-  .admin-action-help {
+  .admin-action-help,
+  .admin-field-help {
     position: relative;
     display: inline-block;
-    margin-left: 6px;
+    margin-left: 4px;
     vertical-align: middle;
+    line-height: 1;
   }
 
-  .admin-action-help summary {
+  .admin-action-help summary,
+  .admin-field-help summary {
     display: inline-grid;
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
     place-items: center;
-    border: 1px solid rgba(154, 211, 232, 0.78);
+    border: 1px solid rgba(154, 211, 232, 0.62);
     border-radius: 50%;
-    color: #9ad3e8;
+    background: rgba(154, 211, 232, 0.06);
+    color: #b9e1f5;
     cursor: pointer;
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: 800;
     list-style: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
   }
 
-  .admin-action-help summary::-webkit-details-marker {
+  .admin-action-help summary::-webkit-details-marker,
+  .admin-field-help summary::-webkit-details-marker {
     display: none;
   }
 
-  .admin-action-help summary:hover {
-    background: rgba(154, 211, 232, 0.12);
+  .admin-action-help summary:hover,
+  .admin-field-help summary:hover {
+    border-color: #9ad3e8;
+    background: rgba(154, 211, 232, 0.18);
   }
 
-  .admin-action-help[open] > span {
+  .admin-action-help[open] > span,
+  .admin-action-help:hover > span,
+  .admin-action-help:focus-within > span,
+  .admin-field-help[open] > span,
+  .admin-field-help:hover > span,
+  .admin-field-help:focus-within > span {
     position: absolute;
     z-index: 100;
     top: calc(100% + 7px);
     left: 0;
-    width: min(290px, 72vw);
-    padding: 10px 12px;
-    border: 1px solid rgba(164, 182, 196, 0.35);
-    border-radius: 7px;
-    background: #0f1c23;
+    width: min(260px, 72vw);
+    padding: 9px 11px;
+    border: 1px solid rgba(154, 211, 232, 0.25);
+    border-radius: 8px;
+    background: #17262f;
     color: #edf4f8;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-    font-size: 0.82rem;
+    box-shadow: 0 5px 16px rgba(0,0,0,0.28);
+    font-size: 0.78rem;
     font-weight: 400;
     line-height: 1.5;
     white-space: normal;
+  }
+
+  .admin-field-help-source {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
   }
 
   .aligned .help,
@@ -135,6 +166,17 @@
   .fieldBox .help {
     color: var(--admin-muted);
     font-size: 0.84rem;
+    line-height: 1.5;
+  }
+
+  #content .help,
+  #content .helptext,
+  #content p.help,
+  #content div.help {
+    max-width: 760px;
+    margin-top: 5px;
+    color: #aebfc8;
+    font-size: 0.8rem;
     line-height: 1.5;
   }
 
@@ -157,6 +199,11 @@
     outline: 3px solid var(--admin-yellow);
     outline-offset: 2px;
   }
+
+  .admin-action-help summary:focus-visible {
+    outline: 2px solid var(--admin-yellow);
+    outline-offset: 2px;
+  }
 </style>
 {% endblock %}
 
@@ -166,27 +213,36 @@
   document.addEventListener('DOMContentLoaded', function () {
     const actionSelector = [
       '#header button',
-      '#nav-sidebar button',
-      '#content button',
       '#content input[type="submit"]',
-      '#content input[type="button"]',
+      '#content button[type="submit"]',
       '#content a.addlink',
       '#content a.changelink',
       '#content a.deletelink',
       '#content .object-tools a',
-      '#content .actions a',
       '#content a.add-row',
-      '#content .related-widget-wrapper-link',
-      '#nav-sidebar a.addlink',
-      '#nav-sidebar a.changelink',
-      '#nav-sidebar a.deletelink',
+      '#user-tools a',
       '.admin-dashboard .admin-link',
       '.admin-dashboard .admin-step-link',
     ].join(',');
 
+    function createHelp(label, description, className) {
+      const help = document.createElement('details');
+      help.className = className;
+      const summary = document.createElement('summary');
+      summary.textContent = '?';
+      summary.setAttribute('aria-label', 'Show help for ' + label);
+      summary.title = 'Show help for ' + label;
+      const helpText = document.createElement('span');
+      helpText.setAttribute('role', 'note');
+      helpText.textContent = description;
+      help.append(summary, helpText);
+      return help;
+    }
+
     function actionDescription(control, label) {
       if (control.title) return control.title;
       const text = label.toLowerCase();
+      if (control.classList.contains('add-row')) return 'Add another related item here. It will be saved with the main record.';
       if (text.includes('save and add another')) return 'Save these changes and open a blank form for another item.';
       if (text.includes('save and continue editing')) return 'Save these changes and keep this item open.';
       if (text.includes('save as new')) return 'Create a new item using these values without changing the original.';
@@ -217,18 +273,30 @@
       const description = actionDescription(control, label);
       control.title = description;
       control.dataset.helpAttached = 'true';
-
-      const help = document.createElement('details');
-      help.className = 'admin-action-help';
-      const summary = document.createElement('summary');
-      summary.textContent = '?';
-      summary.setAttribute('aria-label', 'Show help for ' + label);
-      summary.title = 'Show help for ' + label;
-      const helpText = document.createElement('span');
-      helpText.setAttribute('role', 'note');
-      helpText.textContent = description;
-      help.append(summary, helpText);
+      const help = createHelp(label, description, 'admin-action-help');
       control.insertAdjacentElement('afterend', help);
+    });
+
+    document.querySelectorAll(
+      '#content .form-row .help, #content .form-row .helptext, ' +
+      '#content .fieldBox .help, #content .fieldBox .helptext, ' +
+      '#content .aligned .help, #content .aligned .helptext'
+    ).forEach(function (source) {
+      const description = source.textContent.replace(/\s+/g, ' ').trim();
+      if (!description || source.dataset.helpAttached === 'true') return;
+
+      const fieldId = source.id.replace(/_helptext$/, '');
+      const field = fieldId ? document.getElementById(fieldId) : null;
+      const container = source.closest('.form-row, .fieldBox, .aligned');
+      const label = (field && field.labels && field.labels[0]) ||
+        (container && container.querySelector('label'));
+      if (!label) return;
+
+      const labelText = label.textContent.replace(/\s+/g, ' ').trim().replace(/:$/, '');
+      const help = createHelp(labelText || 'this field', description, 'admin-field-help');
+      label.insertAdjacentElement('afterend', help);
+      source.classList.add('admin-field-help-source');
+      source.dataset.helpAttached = 'true';
     });
   });
 </script>

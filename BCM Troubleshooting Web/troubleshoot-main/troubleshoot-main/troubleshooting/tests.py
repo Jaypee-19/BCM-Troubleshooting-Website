@@ -470,6 +470,8 @@ class TroubleshootingAdminAccessTests(TestCase):
         response = self.client.get('/admin/')
 
         self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'id="nav-sidebar"')
+        self.assertNotContains(response, 'id="toggle-nav-sidebar"')
         self.assertContains(response, 'Build a troubleshooting guide')
         self.assertContains(response, 'Add product range')
         self.assertContains(response, 'Add problem')
@@ -502,6 +504,38 @@ class TroubleshootingAdminAccessTests(TestCase):
         response = self.client.get('/admin/troubleshooting/productrange/')
 
         self.assertEqual(response.status_code, 200)
+
+    def test_product_and_problem_fields_explain_what_to_enter(self):
+        admin_user = get_user_model().objects.create_superuser(
+            username='admin',
+            email='admin@example.com',
+            password='test-password',
+        )
+        self.client.force_login(admin_user)
+
+        product_response = self.client.get(
+            '/admin/troubleshooting/productrange/add/',
+        )
+        problem_response = self.client.get(
+            '/admin/troubleshooting/problem/add/',
+        )
+
+        self.assertContains(
+            product_response,
+            'Summarize what this product range covers',
+        )
+        self.assertContains(
+            product_response,
+            'Enter the product-family name technicians will recognize',
+        )
+        self.assertContains(
+            problem_response,
+            'Describe what the technician may observe',
+        )
+        self.assertContains(
+            problem_response,
+            'Select the product range where technicians should find this issue',
+        )
 
     def test_staff_user_can_manage_configuration_questions(self):
         admin_user = get_user_model().objects.create_superuser(
@@ -538,7 +572,16 @@ class TroubleshootingAdminAccessTests(TestCase):
 
         self.assertContains(question_response, 'System configuration')
         self.assertContains(question_response, 'Conditional display')
+        self.assertContains(
+            question_response,
+            'Write the question technicians should answer',
+        )
+        self.assertContains(
+            question_response,
+            'Add a brief clarification that appears below the question',
+        )
         self.assertContains(flow_response, 'choose its starting step')
+        self.assertNotContains(flow_response, 'id="nav-sidebar"')
 
     def test_admin_question_form_saves_product_scope(self):
         product = ProductRange.objects.get(name='VSAT')
