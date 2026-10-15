@@ -6,15 +6,16 @@
   <header class="page-header">
     <div class="eyebrow">BCM Troubleshooting Guide</div>
     <h1>Find the next right step.</h1>
-    <p class="intro">Follow clear, equipment-specific troubleshooting flows. Each answer takes you to the next relevant check, resolution or detailed procedure.</p>
+    <p class="intro">Follow clear, equipment-specific troubleshooting flows. Each answer leads to the next relevant check, corrective action, or full procedure.</p>
   </header>
 
   <section class="panel">
     {% if request.user.is_authenticated %}
       <h2>Ready to troubleshoot?</h2>
-      <p>Select a product range to see its active problems and guided procedures.</p>
+      <p>Select a product range to review active problems, guided steps, and supporting procedure files.</p>
       <div class="actions">
         <a class="button" href="{% url 'troubleshooting:product_list' %}">Open troubleshooting guide</a>
+        <a class="button secondary" href="{% url 'troubleshooting:search' %}">Search the guide</a>
       </div>
     {% else %}
       <h2>Sign in to access the guide</h2>
@@ -23,5 +24,23 @@
         <a class="button" href="{% url 'troubleshooting:login' %}">Technician sign in</a>
       </div>
     {% endif %}
+  </section>
+
+  <section class="card-grid" aria-label="Support overview">
+    <article class="card">
+      <div class="eyebrow">01</div>
+      <h2>Equipment-specific paths</h2>
+      <p>Start from the correct product line and move through the most relevant system checks.</p>
+    </article>
+    <article class="card">
+      <div class="eyebrow">02</div>
+      <h2>Actionable guidance</h2>
+      <p>Each step narrows the issue and guides the next action without unnecessary detours.</p>
+    </article>
+    <article class="card">
+      <div class="eyebrow">03</div>
+      <h2>Fast issue resolution</h2>
+      <p>Use search, product selection, and guided results to reach the right resolution quickly.</p>
+    </article>
   </section>
 {% endblock %}
